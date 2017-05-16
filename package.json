@@ -1,0 +1,36 @@
+{
+  "name": "geo",
+  "version": "1.0.0",
+  "description": "A utility library for calculations with geo locations",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/teqplay/geo.git"
+  },
+  "keywords": [
+    "geo",
+    "location",
+    "utils"
+  ],
+  "author": "Teqplay",
+  "license": "UNLICENSED",
+  "homepage": "https://bitbucket.org/teqplay/geo#readme",
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  },
+  "devDependencies": {
+    "ava": "0.19.1",
+    "babel-cli": "6.24.1",
+    "babel-core": "6.24.1",
+    "babel-preset-es2015": "6.24.1",
+    "rollup": "0.41.6",
+    "rollup-plugin-babel": "2.7.1"
+  }
+}
