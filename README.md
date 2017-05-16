@@ -1,4 +1,4 @@
-# geo utils
+# geo-utils
 
 A utility library for calculations with geo locations.
 
