@@ -16,8 +16,8 @@
     "location",
     "utils"
   ],
-  "author": "Teqplay",
-  "license": "UNLICENSED",
+  "author": "Teqplay <https://teqplay.nl>",
+  "license": "MIT",
   "homepage": "https://bitbucket.org/teqplay/geo#readme",
   "ava": {
     "require": [

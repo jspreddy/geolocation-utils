@@ -112,4 +112,4 @@ npm test
 
 # License
 
-UNLICENSED
+MIT
