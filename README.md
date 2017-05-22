@@ -18,39 +18,53 @@ const geo = require('geolocation-utils')
 console.log('geo.normalizeAngle(400) =', geo.normalizeAngle(400)) // 40
 ```
 
+TODO: more interesting usage example
+
 # API
 
-TODO: describe and implement the API
+## Data structures
+
+Name | Structure | Description
+---- | ------- | ----
+`LatLon` | `{lat: number, lon: number}` | lat/lon object
+`LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
+`LatLonTuple` | `[number, number]` | lon/lat array (MIND THE ORDER!)
+`Location` | `LatLon | LatitudeLongitude | LatLonTuple` | any geolocation structure
+
+TODO: describe which applications use/support which formats
+
+## Functions
+
+### `toLatLon(Location) : LatLon`
+
+Convert a location into an object with properties `lat` and `lon`.
+
+### `toLatitudeLongitude(Location) : LatitudeLongitude`
+
+Convert a location into an object with properties `latitude` and `longitude`
+
+### `toLatLonTuple(Location) : LatLonTuple`
+
+Convert a location into a tuple `[longitude, latitude]`, as used in the geojson standard
+
+> Note that for example Leaflet uses a tuple `[latitude, longitude]` instead, be careful!
+
+## Constants
+
+### `EARTH_RADIUS`
+
+Returns the earth radius in meters: `6378137`.
+
+
+
+TODO: implement the following functions
 
 ```js
-// geo utils library API
-
-// ------------------------------ location, distance, angle ------------------------------
-
-class Location {
-  constructor (json)  // accepts {lat,lon}, {latitude,longitude}, [lon, lat]
-
-  toLatLon() : {lat: number, lon: number}
-  toLatitudeLongitude : {latitude: number, longitude: number}
-  toTuple
-
-  distanceTo(other: Location) : number
-  angleTo(other: Location) : number
-
-  moveTo (distance: number, angle: number): Location
-}
-
-// or, instead of a class, plain JSON, so we can easily store locations in localStorage 
-// and feed it to Leaflet, etc:
-
-function toLatLon(location: any) : {lat: number, lon: number}
-function toLatitudeLongitude(location: any) : {latitude: number, longitude: number}
-function toLatLonTuple(location: any): [lat, lon]
-function toLonLatTuple(location: any): [lon, lat]
+// convert various formats of latitude/longitude pairs
 
 function distanceTo(from: Location, to: Location) : number
 function angleTo(from: Location, to: Location) : number
-function angleAndDistance (from: Location, to: Location) : {angle: number, distance: number}
+function angleAndDistanceTo (from: Location, to: Location) : {angle: number, distance: number}
 
 function moveTo (location, distance: number, angle: number): Location
 function moveTo (location, {distance: number, angle: number}): Location

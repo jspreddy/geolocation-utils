@@ -1,33 +1,101 @@
-const R = 6378137  // Earth's radius in meters
+export const EARTH_RADIUS = 6378137  // Earth's radius in meters
 
 // Literature:
 //
 // http://www.movable-type.co.uk/scripts/latlong.html
 //
 
+/** * 
+ * @type {{lat: number, lon: number}} LatLon
+ * @type {{latitude: number, longitude: number}} LatitudeLongitude
+ * @type {[number, number]} LonLatTuple
+ * @type {LatLon | LatitudeLongitude | LonLatTuple} Location
+ */
+
 /**
  * Convert a location into an object with properties `lat` and `lon`
- * @param {{longitude: number, latitude: number}} location
- * @returns {{lon: number, lat: number}}
+ * @param {Location} location
+ * @returns {LatLon}
  */
 export function toLatLon (location) {
-  return {
-    lon: location.longitude,
-    lat: location.latitude
+  if (Array.isArray (location)) {
+    return {
+      lat: location[1],
+      lon: location[0]
+    }
   }
+  
+  if (location && 'lat' in location) {
+    return {
+      lat: location.lat,
+      lon: location.lon
+    }
+  }
+  
+  if (location && 'latitude' in location) {
+    return {
+      lat: location.latitude,
+      lon: location.longitude
+    }
+  }
+
+  throw new Error('Unknown location format ' + JSON.stringify(location))
 }
 
 /**
  * Convert a location into an object with properties `latitude` and `longitude`
- * @param {{lon: number, lat: number}} location
- * @returns {{longitude: number, latitude: number}}
+ * @param {Location} location
+ * @returns {LatitudeLongitude}
  */
 export function toLatitudeLongitude (location) {
-  return {
-    longitude: location.lon,
-    latitude: location.lat
+  if (Array.isArray (location)) {
+    return {
+      latitude: location[1],
+      longitude: location[0]
+    }
   }
+  
+  if (location && 'lat' in location) {
+    return {
+      latitude: location.lat,
+      longitude: location.lon
+    }
+  }
+  
+  if (location && 'latitude' in location) {
+    return {
+      latitude: location.latitude,
+      longitude: location.longitude
+    }
+  }
+
+  throw new Error('Unknown location format ' + JSON.stringify(location))
 }
+
+/**
+ * Convert a location into a tuple `[longitude, latitude]`, as used in the geojson standard
+ * 
+ * Note that for example Leaflet uses a tuple `[latitude, longitude]` instead, be careful!
+ * 
+ * @param {Location} location
+ * @returns {LonLatTuple}
+ */
+export function toLonLatTuple (location) {
+  if (Array.isArray (location)) {
+    return [location[0], location[1]]
+  }
+  
+  if (location && 'lat' in location) {
+    return [location.lon, location.lat]
+  }
+  
+  if (location && 'latitude' in location) {
+    return [location.longitude, location.latitude]
+  }
+
+  throw new Error('Unknown location format ' + JSON.stringify(location))
+}
+
 
 /**
  * Calculate the average of two or multiple points
@@ -88,8 +156,8 @@ export function averageOfPointsArray (points) {
  * @return {{lat: number, lon: number}}
  */
 export function pointAroundCenter (center, distance, angle) {
-  const dLat = distance * Math.cos(degToRad(angle)) / R
-  const dLon = distance * Math.sin(degToRad(angle)) / (R * Math.cos(degToRad(center.lat)))
+  const dLat = distance * Math.cos(degToRad(angle)) / EARTH_RADIUS
+  const dLon = distance * Math.sin(degToRad(angle)) / (EARTH_RADIUS * Math.cos(degToRad(center.lat)))
 
   return {
     lat: center.lat + radToDeg(dLat),
@@ -119,7 +187,7 @@ export function angleDistance (center, point) {
       Math.cos(lat1) * Math.cos(lat2) *
       Math.sin(dlon/2) * Math.sin(dlon/2)
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-  const distance = R * c
+  const distance = EARTH_RADIUS * c
 
   const y = Math.sin(dlon) * Math.cos(lat2)
   const x = Math.cos(lat1) * Math.sin(lat2) -

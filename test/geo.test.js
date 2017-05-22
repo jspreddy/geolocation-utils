@@ -1,5 +1,44 @@
 import test from 'ava'
-import { pointAroundCenter, angleDistance, averageAngles, diffAngles } from '../src/geo'
+import { 
+    toLatitudeLongitude, toLatLon, toLonLatTuple,
+    pointAroundCenter, angleDistance, averageAngles, diffAngles 
+} from '../src/geo'
+
+test ('toLatitudeLongitude', t => {
+    t.deepEqual(toLatitudeLongitude([4, 51]), {latitude: 51, longitude: 4})
+    t.deepEqual(toLatitudeLongitude([0, 0]), {latitude: 0, longitude: 0})
+
+    t.deepEqual(toLatitudeLongitude({lat: 51, lon: 4}), {latitude: 51, longitude: 4})
+    t.deepEqual(toLatitudeLongitude({lat: 0, lon: 0}), {latitude: 0, longitude: 0})
+
+    t.deepEqual(toLatitudeLongitude({latitude: 51, longitude: 4}), {latitude: 51, longitude: 4})
+    t.deepEqual(toLatitudeLongitude({latitude: 0, longitude: 0}), {latitude: 0, longitude: 0})
+})
+
+test ('toLatLon', t => {
+    t.deepEqual(toLatLon([4, 51]), {lat: 51, lon: 4})
+    t.deepEqual(toLatLon([0, 0]), {lat: 0, lon: 0})
+
+    t.deepEqual(toLatLon({lat: 51, lon: 4}), {lat: 51, lon: 4})
+    t.deepEqual(toLatLon({lat: 0, lon: 0}), {lat: 0, lon: 0})
+
+    t.deepEqual(toLatLon({latitude: 51, longitude: 4}), {lat: 51, lon: 4})
+    t.deepEqual(toLatLon({latitude: 0, longitude: 0}), {lat: 0, lon: 0})
+})
+
+test ('toLonLatTuple', t => {
+    t.deepEqual(toLonLatTuple([4, 51]), [4, 51])
+    t.deepEqual(toLonLatTuple([0, 0]), [0, 0])
+
+    t.deepEqual(toLonLatTuple({lat: 51, lon: 4}), [4, 51])
+    t.deepEqual(toLonLatTuple({lat: 0, lon: 0}), [0, 0])
+
+    t.deepEqual(toLonLatTuple({latitude: 51, longitude: 4}), [4, 51])
+    t.deepEqual(toLonLatTuple({latitude: 0, longitude: 0}), [0, 0])
+})
+
+
+// TODO: review all tests lower down
 
 test('pointAroundCenter', t => {
   t.deepEqual(pointAroundCenter({lat: 51, lon: 0}, 100, 0),
