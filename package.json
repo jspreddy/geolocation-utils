@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/teqplay/geolocation-utils.git"
+    "url": "https://git@bitbucket.org/teqplay/geolocation-utils.git"
   },
   "keywords": [
     "geo",

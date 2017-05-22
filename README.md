@@ -1,6 +1,12 @@
 # geolocation-utils
 
-A utility library for calculations with geo locations.
+A utility library for calculations with geolocations.
+
+# Install
+
+```
+npm install geolocation-utils
+```
 
 # Usage
 
@@ -96,7 +102,6 @@ function cpa (track1: {location: Location, speed: number}, track2: {location: Lo
 To generate ES5 code in the `lib` folder, run:
 
 ```
-npm install     # (once)
 npm run build
 ```
 
@@ -106,9 +111,33 @@ TODO: create a bundle for browser usage
 # Test
 
 ```
-npm install     # (once)
 npm test 
 ```
+
+# Publish 
+
+- Update version number in `package.json`
+- Describe version number, date, and changes in `CHANGELOG.md`
+- Build and test the library
+  ```
+  npm run build
+  npm test
+  ```
+
+- Commit the changes, and create a tag with version number
+  ```
+  git add ...
+  git commit -m "Released version 1.2.3"
+  git push origin master
+  git tag v1.2.3
+  git push --tags
+  ```
+
+- Publish the library
+  ```
+  npm publish
+  ```
+
 
 # License
 

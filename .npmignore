@@ -1,8 +1,2 @@
 node_modules
 .idea
-
-# temporarily ignore everything for the first published version
-examples
-lib
-src
-test
