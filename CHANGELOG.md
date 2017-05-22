@@ -1,2 +1,2 @@
-# geo-utils changelog
+# geolocation-utils changelog
 

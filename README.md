@@ -1,4 +1,4 @@
-# geo-utils
+# geolocation-utils
 
 A utility library for calculations with geo locations.
 
@@ -7,7 +7,7 @@ A utility library for calculations with geo locations.
 Node.js:
 
 ```js
-const geo = require('..')
+const geo = require('geolocation-utils')
 
 console.log('geo.normalizeAngle(400) =', geo.normalizeAngle(400)) // 40
 ```
