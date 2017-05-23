@@ -29,7 +29,7 @@ Name | Structure | Description
 `LatLon` | `{lat: number, lon: number}` | lat/lon object
 `LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
 `LatLonTuple` | `[number, number]` | lon/lat array (MIND THE ORDER!)
-`Location` | `LatLon | LatitudeLongitude | LatLonTuple` | any geolocation structure
+`Location` | <code>LatLon &#124; LatitudeLongitude &#124; LatLonTuple</code> | any geolocation structure
 
 TODO: describe which applications use/support which formats
 
@@ -56,6 +56,7 @@ Convert a location into a tuple `[longitude, latitude]`, as used in the geojson 
 Returns the earth radius in meters: `6378137`.
 
 
+## Roadmap
 
 TODO: implement the following functions
 
@@ -68,6 +69,11 @@ function angleAndDistanceTo (from: Location, to: Location) : {angle: number, dis
 
 function moveTo (location, distance: number, angle: number): Location
 function moveTo (location, {distance: number, angle: number}): Location
+
+// Normalize a geo location into the range:
+// longitude [-180, 180)
+// latitude [-90, 90]
+function normalizeLocation(location: Location) : Location
 
 // Normalize an angle into the range [0, 360)
 function normalizeAngle(angle: number) : number
