@@ -39,6 +39,8 @@ export function toLatLon (location) {
     }
   }
 
+  // TODO: add support for LatLng
+
   throw new Error('Unknown location format ' + JSON.stringify(location))
 }
 
@@ -69,6 +71,8 @@ export function toLatitudeLongitude (location) {
     }
   }
 
+  // TODO: add support for LatLng
+
   throw new Error('Unknown location format ' + JSON.stringify(location))
 }
 
@@ -92,6 +96,8 @@ export function toLonLatTuple (location) {
   if (location && 'latitude' in location) {
     return [location.longitude, location.latitude]
   }
+  
+  // TODO: add support for LatLng
 
   throw new Error('Unknown location format ' + JSON.stringify(location))
 }

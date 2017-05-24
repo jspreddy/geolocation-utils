@@ -15,7 +15,7 @@ Node.js:
 ```js
 const geo = require('geolocation-utils')
 
-console.log('geo.normalizeAngle(400) =', geo.normalizeAngle(400)) // 40
+console.log(geo.toLatLon([4, 51])) // { lat: 51, lon: 4 }
 ```
 
 TODO: more interesting usage example
@@ -28,8 +28,8 @@ Name | Structure | Description
 ---- | ------- | ----
 `LatLon` | `{lat: number, lon: number}` | lat/lon object
 `LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
-`LatLonTuple` | `[number, number]` | lon/lat array (MIND THE ORDER!)
-`Location` | <code>LatLon &#124; LatitudeLongitude &#124; LatLonTuple</code> | any geolocation structure
+`LatLonTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
+`Location` | `LatLon`, `LatitudeLongitude`, or `LatLonTuple` | any geolocation structure
 
 TODO: describe which applications use/support which formats
 
@@ -116,6 +116,36 @@ function cpa (track1: {location: Location, speed: number}, track2: {location: Lo
 
 // utilities to convert locations to geojson?
 ```
+
+TODO: background information about lat/lon vs lon/lat
+
+# `[lat, lon]` or `[lon, lat]`?
+
+Yeah, it has bitten you probably too. What is the correct order of a geolocation tuple? Is it `[lat, lon]` or `[lon, lat]`? Turns out... there is no right way. There is an ISO standard ([ISO 6709](https://www.wikiwand.com/en/ISO_6709)), but only half of the big geolocation software libraries adhere to this standard whilst others do the opposite. It's painful and embarrassing having to scratch your head over this out again and again. Like Shane puts it in [an answer on StackOverflow](http://stackoverflow.com/questions/7309121/preferred-order-of-writing-latitude-longitude-tuples/13579921#13579921):
+
+> This situation has wreaked unimaginable havoc on project deadlines and programmer sanity.
+
+A nice overview is written down by Tom Macwright in the blog [*lon lat lon lat*](http://www.macwright.org/lonlat/). Here a copy (with some additions):
+
+Category        | [lon, lat]                                                       | [lat, lon]
+--------------- | ---------------------------------------------------------------- | ----------------------------------------
+formats         | GeoJSON <br>KML <br>Shapefile <br>WKT <br> WKB <br>geobuf        | GeoRSS <br>Encoded Polylines (Google)
+javascript apis | OpenLayers <br>d3 <br>ArcGIS API for JavaScript <br>Mapbox GL JS | Leaflet <br>Google Maps API
+mobile apis     | Tangram ES                                                       | Google Maps iOS/Android <br>Apple MapKit
+misc            | OSRM <br>MongoDB <br>Redis
+
+The `geolocation-utils` library supports the `[lon, lat]` format.
+
+To prevent issues in this regard, it is safest to use an object instead of an array. There are various options:
+
+```
+{latitude: 51.9280573, longitude: 4.4203587} // HTML5 geolocation API
+{lat: 51.9280573, lon: 4.4203587}
+{lat: 51.9280573, lng: 4.4203587}            // Leaflet, MongoDB, and Google Maps
+```
+
+TODO: write out which objects are supported by which libraries
+
 
 # Build
 
