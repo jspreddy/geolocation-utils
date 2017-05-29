@@ -1,7 +1,7 @@
 # geolocation-utils changelog
 
 
-# not yet released, version 0.2.0
+# 2017-05-29, version 0.2.0
 
 - Implemented support for `{lat, lng}` format, and corresponding function `toLatLng`.
 - Implemented `getLatitude` and `getLongitude`.
