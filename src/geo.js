@@ -5,11 +5,12 @@ export const EARTH_RADIUS = 6378137  // Earth's radius in meters
 // http://www.movable-type.co.uk/scripts/latlong.html
 //
 
-/** * 
+/**
  * @type {{lat: number, lon: number}} LatLon
+ * @type {{lat: number, lon: number}} LatLng
  * @type {{latitude: number, longitude: number}} LatitudeLongitude
  * @type {[number, number]} LonLatTuple
- * @type {LatLon | LatitudeLongitude | LonLatTuple} Location
+ * @type {LatLon | LatLng, LatitudeLongitude | LonLatTuple} Location
  */
 
 /**
@@ -25,21 +26,63 @@ export function toLatLon (location) {
     }
   }
   
-  if (location && 'lat' in location) {
+  if (location && 'lon' in location) {
     return {
       lat: location.lat,
       lon: location.lon
     }
   }
   
-  if (location && 'latitude' in location) {
+  if (location && 'lng' in location) {
+    return {
+      lat: location.lat,
+      lon: location.lng
+    }
+  }
+  
+  if (location && 'longitude' in location) {
     return {
       lat: location.latitude,
       lon: location.longitude
     }
   }
 
-  // TODO: add support for LatLng
+  throw new Error('Unknown location format ' + JSON.stringify(location))
+}
+
+/**
+ * Convert a location into an object with properties `lat` and `lng`
+ * @param {Location} location
+ * @returns {LatLng}
+ */
+export function toLatLng (location) {
+  if (Array.isArray (location)) {
+    return {
+      lat: location[1],
+      lng: location[0]
+    }
+  }
+  
+  if (location && 'lon' in location) {
+    return {
+      lat: location.lat,
+      lng: location.lon
+    }
+  }
+  
+  if (location && 'lng' in location) {
+    return {
+      lat: location.lat,
+      lng: location.lng
+    }
+  }
+  
+  if (location && 'longitude' in location) {
+    return {
+      lat: location.latitude,
+      lng: location.longitude
+    }
+  }
 
   throw new Error('Unknown location format ' + JSON.stringify(location))
 }
@@ -57,21 +100,26 @@ export function toLatitudeLongitude (location) {
     }
   }
   
-  if (location && 'lat' in location) {
+  if (location && 'lon' in location) {
     return {
       latitude: location.lat,
       longitude: location.lon
     }
   }
   
-  if (location && 'latitude' in location) {
+  if (location && 'lng' in location) {
+    return {
+      latitude: location.lat,
+      longitude: location.lng
+    }
+  }
+  
+  if (location && 'longitude' in location) {
     return {
       latitude: location.latitude,
       longitude: location.longitude
     }
   }
-
-  // TODO: add support for LatLng
 
   throw new Error('Unknown location format ' + JSON.stringify(location))
 }
@@ -89,15 +137,17 @@ export function toLonLatTuple (location) {
     return [location[0], location[1]]
   }
   
-  if (location && 'lat' in location) {
+  if (location && 'lon' in location) {
     return [location.lon, location.lat]
   }
   
-  if (location && 'latitude' in location) {
-    return [location.longitude, location.latitude]
+  if (location && 'lng' in location) {
+    return [location.lng, location.lat]
   }
   
-  // TODO: add support for LatLng
+  if (location && 'longitude' in location) {
+    return [location.longitude, location.latitude]
+  }
 
   throw new Error('Unknown location format ' + JSON.stringify(location))
 }

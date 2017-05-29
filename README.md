@@ -27,13 +27,18 @@ TODO: more interesting usage example
 Name | Structure | Description
 ---- | ------- | ----
 `LatLon` | `{lat: number, lon: number}` | lat/lon object
+`LatLng` | `{lat: number, lng: number}` | lat/lng object
 `LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
 `LatLonTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
-`Location` | `LatLon`, `LatitudeLongitude`, or `LatLonTuple` | any geolocation structure
+`Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LatLonTuple` | any geolocation structure
 
 TODO: describe which applications use/support which formats
 
 ## Functions
+
+### `toLatLng(Location) : LatLng`
+
+Convert a location into an object with properties `lat` and `lng`.
 
 ### `toLatLon(Location) : LatLon`
 
