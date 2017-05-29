@@ -15,6 +15,59 @@ export const EARTH_RADIUS = 6378137  // Earth's radius in meters
  */
 
 /**
+ * Get the type of a location object
+ * @param {Location} location
+ * @return {string} Returns the type of the location object
+ *                  Recognized types: 'LatLonTuple', 'LatLon', 'LatLng', 'LatitudeLongitude'
+ */
+export function getLocationType (location) {
+  if (Array.isArray (location) && 
+      typeof location[0] === 'number' && typeof location[1] === 'number') {
+    return 'LatLonTuple'
+  }
+  
+  if (location && typeof location.lat === 'number' && typeof location.lon === 'number') {
+    return 'LatLon'
+  }
+  
+  if (location && typeof location.lat === 'number' && typeof location.lng === 'number') {
+    return 'LatLng'
+  }
+  
+  if (location && typeof location.latitude === 'number' && typeof location.longitude === 'number') {
+    return 'LatitudeLongitude'
+  }
+
+  throw new Error('Unknown location format ' + JSON.stringify(location))
+}
+
+/**
+ * Create a Location object of a specific type
+ * @param {number} latitude
+ * @param {number} longitude
+ * @param {string} type  Available types: 'LatLonTuple', 'LatLon', 'LatLng', 'LatitudeLongitude'
+ */
+export function createLocation (latitude, longitude, type) {
+  if (type === 'LatLonTuple') {
+    return [longitude, latitude]
+  }
+  
+  if (type === 'LatLon') {
+    return { lat: latitude, lon: longitude }
+  }
+  
+  if (type === 'LatLng') {
+    return { lat: latitude, lng: longitude }
+  }
+  
+  if (type === 'LatitudeLongitude') {
+    return { latitude, longitude }
+  }
+  
+  throw new Error('Unknown location format ' + JSON.stringify(location))
+}
+
+/**
  * Convert a location into an object with properties `lat` and `lon`
  * @param {Location} location
  * @returns {LatLon}
@@ -204,6 +257,85 @@ export function getLatitude (location) {
 }
 
 /**
+ * Move to a new location from a start location, angle, and distance
+ *
+ * This is a rough estimation.
+ *
+ * Source: http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
+ * @param {Location} location             Start location
+ * @param {AngleDistance} angleDistance   An object with property `angle` in degrees and `distance` in meters
+ * @return {Location} Returns the moved location
+ */
+export function moveTo (location, angleDistance) {
+  // TODO: improve precision of this function moveTo
+  const lat = getLatitude(location)
+  const lon = getLongitude(location)
+  const { angle, distance } = angleDistance 
+
+  const dLat = distance * Math.cos(degToRad(angle)) / EARTH_RADIUS
+  const dLon = distance * Math.sin(degToRad(angle)) / (EARTH_RADIUS * Math.cos(degToRad(lat)))
+
+  return createLocation(lat + radToDeg(dLat), lon + radToDeg(dLon), getLocationType(location))
+}
+
+/**
+ * Calculate the angle and distance between two locations
+ *
+ * Sources:
+ * 
+ *   http://www.movable-type.co.uk/scripts/latlong.html
+ *   http://mathforum.org/library/drmath/view/55417.html
+ * 
+ * @param {Location} from   Start location
+ * @param {Location} to     End location
+ * @return {{distance, angle}}  Returns an object with `distance` in meters and `angle` in degrees
+ */
+export function angleAndDistanceTo (from, to) {
+  const fromLat = getLatitude(from)
+  const fromLon = getLongitude(from)
+  const toLat = getLatitude(to)
+  const toLon = getLongitude(to)
+
+  const lat1 = degToRad(fromLat)
+  const lat2 = degToRad(toLat)
+  const dlat = degToRad(toLat - fromLat)
+  const dlon = degToRad(toLon - fromLon)
+
+  const a = Math.sin(dlat/2) * Math.sin(dlat/2) +
+      Math.cos(lat1) * Math.cos(lat2) *
+      Math.sin(dlon/2) * Math.sin(dlon/2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+  const distance = EARTH_RADIUS * c
+
+  const y = Math.sin(dlon) * Math.cos(lat2)
+  const x = Math.cos(lat1) * Math.sin(lat2) -
+      Math.sin(lat1) * Math.cos(lat2) * Math.cos(dlon)
+  const angle = radToDeg(Math.atan2(y, x))
+
+  return { distance, angle }
+}
+
+/**
+ * Calculate the angle from one location to another location
+ * @param {Location} center 
+ * @param {Location} point 
+ * @return {number} Returns an angle in degrees
+ */
+export function angleTo (center, point) {
+  return angleAndDistanceTo(center, point).angle
+}
+
+/**
+ * Calculate the distance between two locations
+ * @param {Location} center 
+ * @param {Location} point 
+ * @return {number} Returns the distance in meters
+ */
+export function distanceTo (center, point) {
+  return angleAndDistanceTo(center, point).distance
+}
+
+/**
  * Calculate the average of two or multiple points
  * @param {...{lon: number, lon: number}} points
  * @returns {{lon: number, lat: number}}
@@ -247,85 +379,6 @@ export function averageOfPointsArray (points) {
     lon: sum.lon / points.length,
     lat: sum.lat / points.length
   }
-}
-
-/**
- * Calculate the position of a point located at a certain distance and angle
- * of given center point.
- *
- * This is a rough estimation.
- *
- * Source: http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
- * @param {{lat: number, lon: number}} center
- * @param {number} distance  Distance in meters
- * @param {number} angle     Angle in degrees
- * @return {{lat: number, lon: number}}
- */
-export function pointAroundCenter (center, distance, angle) {
-  const dLat = distance * Math.cos(degToRad(angle)) / EARTH_RADIUS
-  const dLon = distance * Math.sin(degToRad(angle)) / (EARTH_RADIUS * Math.cos(degToRad(center.lat)))
-
-  return {
-    lat: center.lat + radToDeg(dLat),
-    lon: center.lon + radToDeg(dLon)
-  }
-}
-
-/**
- * Calculate the angle and distance between two locations
- *
- * Sources:
- * 
- *   http://www.movable-type.co.uk/scripts/latlong.html
- *   http://mathforum.org/library/drmath/view/55417.html
- * 
- * @param {Location} center
- * @param {Location} point
- * @return {{distance, angle}}  Returns an object with `distance` in meters and `angle` in degrees
- */
-export function angleAndDistanceTo (center, point) {
-  var centerLat = getLatitude(center)
-  var centerLon = getLongitude(center)
-  var pointLat = getLatitude(point)
-  var pointLon = getLongitude(point)
-
-  var lat1 = degToRad(centerLat)
-  var lat2 = degToRad(pointLat)
-  var dlat = degToRad(pointLat - centerLat)
-  var dlon = degToRad(pointLon - centerLon)
-
-  const a = Math.sin(dlat/2) * Math.sin(dlat/2) +
-      Math.cos(lat1) * Math.cos(lat2) *
-      Math.sin(dlon/2) * Math.sin(dlon/2)
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-  const distance = EARTH_RADIUS * c
-
-  const y = Math.sin(dlon) * Math.cos(lat2)
-  const x = Math.cos(lat1) * Math.sin(lat2) -
-      Math.sin(lat1) * Math.cos(lat2) * Math.cos(dlon)
-  const angle = radToDeg(Math.atan2(y, x))
-
-  return { distance, angle }
-}
-
-/**
- * Calculate the angle from one location to another location
- * @param {Location} center 
- * @param {Location} point 
- * @return {number} Returns an angle in degrees
- */
-export function angleTo (center, point) {
-  return angleAndDistanceTo(center, point).angle
-}
-
-/**
- * Calculate the distance between two locations
- * @param {Location} center 
- * @param {Location} point 
- * @return {number} Returns the distance in meters
- */
-export function distanceTo (center, point) {
-  return angleAndDistanceTo(center, point).distance
 }
 
 /**

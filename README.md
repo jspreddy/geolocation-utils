@@ -21,8 +21,8 @@ const point1 = {lat: 51, lon: 4}
 const point1 = {lat: 51.001, lon: 4.001 }
 console.log(geo.angleAndDistanceTo(point1, point2)) 
     // { 
-    //   distance: 131.5...,   // meter
-    //   angle: 32.1...        // degrees
+    //   angle: 32.1...,      // degrees
+    //   distance: 131.5...   // meter
     // }
 ```
 
@@ -38,6 +38,7 @@ Name | Structure | Description
 `LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
 `LatLonTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
 `Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LatLonTuple` | any geolocation structure
+`AngleDistance` | {angle: number, distance: number}
 
 TODO: describe which applications use/support which formats
 
@@ -79,9 +80,13 @@ Calculate the angle from one location to another location. Returns an angle in d
 
 Calculate the distance between two locations. Returns a distance in meters.
 
-### `angleAndDistanceTo (from: Location, to: Location) : {angle: number, distance: number}`
+### `angleAndDistanceTo (from: Location, to: Location) : AngleDistance`
 
 Calculate the angle and distance between two locations. Returns an object with a property `angle` in degrees, and a property `distance` in meters.
+
+### `moveTo(center: Location, angleDistance: AngleDistance): Location`
+
+Move to a new location from a start location, angle (in degrees), and distance (in meters).
 
 ## Conversion functions for angles and speed
 
@@ -126,11 +131,6 @@ Returns the earth radius in meters: `6378137`.
 TODO: implement the following functions
 
 ```js
-// convert various formats of latitude/longitude pairs
-
-function moveTo (location, distance: number, angle: number): Location
-function moveTo (location, {distance: number, angle: number}): Location
-
 // Normalize a geo location into the range:
 // longitude [-180, 180)
 // latitude [-90, 90]

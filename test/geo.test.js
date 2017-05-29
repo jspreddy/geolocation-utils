@@ -4,9 +4,12 @@ import {
   getLatitude, getLongitude,
   radToDeg, degToRad, 
   knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
-  angleAndDistanceTo, angleTo, distanceTo,
-  pointAroundCenter,averageAngles, diffAngles 
+  angleAndDistanceTo, angleTo, distanceTo, moveTo,
+  averageAngles, diffAngles 
 } from '../src/geo'
+
+// TODO: test getLocationType, and describe in API
+// TODO: test createLocation, and describe in API
 
 test ('toLatitudeLongitude', t => {
   t.deepEqual(toLatitudeLongitude([4, 51]), {latitude: 51, longitude: 4})
@@ -136,7 +139,6 @@ test('angleAndDistanceTo', t => {
 
   t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat: 51.000635204829045,lon:0.0010093504645301253}),
     {distance:99.99965773348121,angle:44.999411688665425})
-console.log(angleAndDistanceTo({lat: 51, lon: 4}, {lat: 51.001,lon:4.001}))
 
   t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}),
     {distance:99.99999999843808,angle:89.99944533657323})
@@ -169,30 +171,43 @@ test('distanceTo', t => {
   t.deepEqual(distanceTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}), 99.99999999843808)
 })
 
+test('moveTo', t => {
+  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 0}),
+    {lat:51.00089831528412,lon:0})
 
+  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 200, angle: 0}),
+    {lat:51.001796630568236,lon:0})
+
+  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 45}),
+    {lat: 51.000635204829045,lon:0.0010093504645301253})
+
+  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 90}),
+    {lat:51,lon:0.001427437116126087})
+
+  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 180}),
+    {lat:50.99910168471588,lon:1.7481062952479413e-19})
+
+  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 270}),
+    {lat:51,lon:-0.001427437116126087})
+})
+
+test('moveTo (different location formats)', t => {
+  const angleDistance = {distance: 100, angle: 45}
+
+  t.deepEqual(moveTo({lat: 51, lon: 0}, angleDistance),
+    {lat: 51.000635204829045,lon:0.0010093504645301253})
+  t.deepEqual(moveTo({lat: 51, lng: 0}, angleDistance),
+    {lat: 51.000635204829045,lng:0.0010093504645301253})
+  t.deepEqual(moveTo({latitude: 51, longitude: 0}, angleDistance),
+    {latitude: 51.000635204829045,longitude:0.0010093504645301253})
+  t.deepEqual(moveTo([0, 51], angleDistance), 
+    [0.0010093504645301253, 51.000635204829045])
+
+  t.throws(() => { moveTo({foo: 'bar'}, {angle: 0, distance: 0}) }, /Unknown location format/)
+})
 
 
 // TODO: review all tests lower down
-
-test('pointAroundCenter', t => {
-  t.deepEqual(pointAroundCenter({lat: 51, lon: 0}, 100, 0),
-    {lat:51.00089831528412,lon:0})
-
-  t.deepEqual(pointAroundCenter({lat: 51, lon: 0}, 200, 0),
-    {lat:51.001796630568236,lon:0})
-
-  t.deepEqual(pointAroundCenter({lat: 51, lon: 0}, 100, 45),
-    {lat: 51.000635204829045,lon:0.0010093504645301253})
-
-  t.deepEqual(pointAroundCenter({lat: 51, lon: 0}, 100, 90),
-    {lat:51,lon:0.001427437116126087})
-
-  t.deepEqual(pointAroundCenter({lat: 51, lon: 0}, 100, 180),
-    {lat:50.99910168471588,lon:1.7481062952479413e-19})
-
-  t.deepEqual(pointAroundCenter({lat: 51, lon: 0}, 100, 270),
-    {lat:51,lon:-0.001427437116126087})
-})
 
 test('averageAngles', t => {
   t.is(averageAngles(90, 180), 135)
