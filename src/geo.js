@@ -11,6 +11,7 @@ export const EARTH_RADIUS = 6378137  // Earth's radius in meters
  * @type {{latitude: number, longitude: number}} LatitudeLongitude
  * @type {[number, number]} LonLatTuple
  * @type {LatLon | LatLng, LatitudeLongitude | LonLatTuple} Location
+ * @type {{distance: number, angle: number}} AngleDistance
  */
 
 /**
@@ -19,6 +20,7 @@ export const EARTH_RADIUS = 6378137  // Earth's radius in meters
  * @returns {LatLon}
  */
 export function toLatLon (location) {
+  // TODO: make more strict, check whether containing the right types for both lat and lon
   if (Array.isArray (location)) {
     return {
       lat: location[1],
@@ -56,6 +58,7 @@ export function toLatLon (location) {
  * @returns {LatLng}
  */
 export function toLatLng (location) {
+  // TODO: make more strict, check whether containing the right types for both lat and lon
   if (Array.isArray (location)) {
     return {
       lat: location[1],
@@ -93,6 +96,7 @@ export function toLatLng (location) {
  * @returns {LatitudeLongitude}
  */
 export function toLatitudeLongitude (location) {
+  // TODO: make more strict, check whether containing the right types for both lat and lon
   if (Array.isArray (location)) {
     return {
       latitude: location[1],
@@ -133,6 +137,7 @@ export function toLatitudeLongitude (location) {
  * @returns {LonLatTuple}
  */
 export function toLonLatTuple (location) {
+  // TODO: make more strict, check whether containing the right types for both lat and lon
   if (Array.isArray (location)) {
     return [location[0], location[1]]
   }
@@ -152,6 +157,51 @@ export function toLonLatTuple (location) {
   throw new Error('Unknown location format ' + JSON.stringify(location))
 }
 
+/**
+ * Get the longitude of a location
+ * @param {Location} location
+ * @return {number} Returns the longitude
+ */
+export function getLongitude (location) {
+  if (Array.isArray (location) && typeof location[0] === 'number') {
+    return location[0]
+  }
+  
+  if (location && typeof location.lon === 'number') {
+    return location.lon
+  }
+  
+  if (location && typeof location.lng === 'number') {
+    return location.lng
+  }
+  
+  if (location && typeof location.longitude === 'number') {
+    return location.longitude
+  }
+
+  throw new Error('Unknown location format ' + JSON.stringify(location))
+}
+
+/**
+ * Get the latitude of a location object or array
+ * @param {Location} location
+ * @return {number} Returns the latitude
+ */
+export function getLatitude (location) {
+  if (Array.isArray (location) && typeof location[1] === 'number') {
+    return location[1]
+  }
+  
+  if (location && typeof location.lat === 'number') {
+    return location.lat
+  }
+  
+  if (location && typeof location.latitude === 'number') {
+    return location.latitude
+  }
+
+  throw new Error('Unknown location format ' + JSON.stringify(location))
+}
 
 /**
  * Calculate the average of two or multiple points
@@ -222,22 +272,27 @@ export function pointAroundCenter (center, distance, angle) {
 }
 
 /**
- * Calculate the angle and distance between two points
+ * Calculate the angle and distance between two locations
  *
  * Sources:
  * 
  *   http://www.movable-type.co.uk/scripts/latlong.html
  *   http://mathforum.org/library/drmath/view/55417.html
  * 
- * @param {{lat: number, lon: number}} center
- * @param {{lat: number, lon: number}} point
- * @return {{distance, angle}}  Distance in meters, angle in degrees
+ * @param {Location} center
+ * @param {Location} point
+ * @return {{distance, angle}}  Returns an object with `distance` in meters and `angle` in degrees
  */
-export function angleDistance (center, point) {
-  var lat1 = degToRad(center.lat)
-  var lat2 = degToRad(point.lat)
-  var dlat = degToRad(point.lat - center.lat)
-  var dlon = degToRad(point.lon - center.lon)
+export function angleAndDistanceTo (center, point) {
+  var centerLat = getLatitude(center)
+  var centerLon = getLongitude(center)
+  var pointLat = getLatitude(point)
+  var pointLon = getLongitude(point)
+
+  var lat1 = degToRad(centerLat)
+  var lat2 = degToRad(pointLat)
+  var dlat = degToRad(pointLat - centerLat)
+  var dlon = degToRad(pointLon - centerLon)
 
   const a = Math.sin(dlat/2) * Math.sin(dlat/2) +
       Math.cos(lat1) * Math.cos(lat2) *
@@ -251,6 +306,26 @@ export function angleDistance (center, point) {
   const angle = radToDeg(Math.atan2(y, x))
 
   return { distance, angle }
+}
+
+/**
+ * Calculate the angle from one location to another location
+ * @param {Location} center 
+ * @param {Location} point 
+ * @return {number} Returns an angle in degrees
+ */
+export function angleTo (center, point) {
+  return angleAndDistanceTo(center, point).angle
+}
+
+/**
+ * Calculate the distance between two locations
+ * @param {Location} center 
+ * @param {Location} point 
+ * @return {number} Returns the distance in meters
+ */
+export function distanceTo (center, point) {
+  return angleAndDistanceTo(center, point).distance
 }
 
 /**

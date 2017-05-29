@@ -16,9 +16,16 @@ Node.js:
 const geo = require('geolocation-utils')
 
 console.log(geo.toLatLon([4, 51])) // { lat: 51, lon: 4 }
+
+const point1 = {lat: 51, lon: 4}
+const point1 = {lat: 51.001, lon: 4.001 }
+console.log(geo.angleAndDistanceTo(point1, point2)) 
+    // { 
+    //   distance: 131.5...,   // meter
+    //   angle: 32.1...        // degrees
+    // }
 ```
 
-TODO: more interesting usage example
 
 # API
 
@@ -53,6 +60,28 @@ Convert a location into an object with properties `latitude` and `longitude`
 Convert a location into a tuple `[longitude, latitude]`, as used in the geojson standard
 
 > Note that for example Leaflet uses a tuple `[latitude, longitude]` instead, be careful!
+
+### `getLatitude(location: Location) : LatLng`
+
+Get the latitude of a location
+
+### `getLongitude(location: Location) : LatLng`
+
+Get the longitude of a location
+
+## Location transforms
+
+### `angleTo(from: Location, to: Location) : number`
+
+Calculate the angle from one location to another location. Returns an angle in degrees.
+
+### `distanceTo(from: Location, to: Location) : number`
+
+Calculate the distance between two locations. Returns a distance in meters.
+
+### `angleAndDistanceTo (from: Location, to: Location) : {angle: number, distance: number}`
+
+Calculate the angle and distance between two locations. Returns an object with a property `angle` in degrees, and a property `distance` in meters.
 
 ## Conversion functions for angles and speed
 
@@ -98,10 +127,6 @@ TODO: implement the following functions
 
 ```js
 // convert various formats of latitude/longitude pairs
-
-function distanceTo(from: Location, to: Location) : number
-function angleTo(from: Location, to: Location) : number
-function angleAndDistanceTo (from: Location, to: Location) : {angle: number, distance: number}
 
 function moveTo (location, distance: number, angle: number): Location
 function moveTo (location, {distance: number, angle: number}): Location
