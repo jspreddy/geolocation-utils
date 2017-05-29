@@ -34,25 +34,56 @@ Name | Structure | Description
 
 TODO: describe which applications use/support which formats
 
-## Functions
+## Conversion functions for locations
 
-### `toLatLng(Location) : LatLng`
+### `toLatLng(location: Location) : LatLng`
 
 Convert a location into an object with properties `lat` and `lng`.
 
-### `toLatLon(Location) : LatLon`
+### `toLatLon(location: Location) : LatLon`
 
 Convert a location into an object with properties `lat` and `lon`.
 
-### `toLatitudeLongitude(Location) : LatitudeLongitude`
+### `toLatitudeLongitude(location: Location) : LatitudeLongitude`
 
 Convert a location into an object with properties `latitude` and `longitude`
 
-### `toLatLonTuple(Location) : LatLonTuple`
+### `toLatLonTuple(location: Location) : LatLonTuple`
 
 Convert a location into a tuple `[longitude, latitude]`, as used in the geojson standard
 
 > Note that for example Leaflet uses a tuple `[latitude, longitude]` instead, be careful!
+
+## Conversion functions for angles and speed
+
+### `degToRad(angle: number) : number`
+
+Convert an angle in degrees into an angle in radians.
+
+### `radToDeg(angle: number) : number`
+
+Convert an angle in radians into an angle in degrees.
+
+### `knotsToMeterPerSecond(knots: number) : number`
+
+Convert a speed in knots into a speed in meter per second.
+1 knot is 0.514444 m/s.
+
+### `meterPerSecondToKnots(meterPerSecond: number) : number`
+
+Convert a speed in meter per second into a speed in knots.
+1 knot is 0.514444 m/s.
+
+### `knotsToKmPerHour(knots: number) : number`
+
+Convert a speed in knots into a speed in kilometer per hour.
+1 knot is 1.852 kilometer per hour.
+
+### `kmPerHourToKnots(kmPerHour: number) : number`
+
+Convert a speed in kilometer per hour into a speed in knots.
+1 knot is 1.852 kilometer per hour.
+
 
 ## Constants
 
@@ -86,9 +117,6 @@ function normalizeAngle(angle: number) : number
 // Calculate the smallest difference between two angles. Always smaller or equal to 180 degrees.
 function diffAngles (angle1: number, angle2: number) : number 
 
-function degToRad (deg: number) : number
-function radToDeg (rad: number) : number
-
 // ------------------------- stats ------------------------------
 
 function averageOfLocations (locations : Location) : Location
@@ -109,9 +137,6 @@ function getBoundingBox(locations: Location[], margin): Locations[]
 
 
 // ------------------------------ speed, cpa, ... ------------------------------
-
-function knotsToMeterPerSecond (knots: number): number 
-function meterPerSecondToKnots (meterPerSecond: number) : number
 
 // closet point of approach
 function cpa (track1: {location: Location, speed: number}, track2: {location: Location, speed: number}) : {time: number, distance: number}

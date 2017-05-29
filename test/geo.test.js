@@ -1,6 +1,8 @@
 import test from 'ava'
 import { 
   toLatitudeLongitude, toLatLon, toLatLng, toLonLatTuple,
+  radToDeg, degToRad, 
+  knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
   pointAroundCenter, angleDistance, averageAngles, diffAngles 
 } from '../src/geo'
 
@@ -71,6 +73,42 @@ test ('toLonLatTuple', t => {
   t.throws(() => { toLonLatTuple({foo: 'bar'}) }, /Unknown location format/)
 })
 
+test ('degToRad', t => {
+  approxEqual(t, degToRad(45), Math.PI / 4)
+  approxEqual(t, degToRad(90), Math.PI / 2)
+  approxEqual(t, degToRad(0), 0)
+  approxEqual(t, degToRad(-90), -Math.PI / 2)
+})
+
+test ('radToDeg', t => {
+  approxEqual(t, radToDeg(Math.PI / 4), 45)
+  approxEqual(t, radToDeg(Math.PI / 2), 90)
+  approxEqual(t, radToDeg(0), 0)
+  approxEqual(t, radToDeg(-Math.PI / 2), -90)
+})
+
+test ('knotsToMeterPerSecond', t => {
+  approxEqual(t, knotsToMeterPerSecond(5), 2.57222)
+  approxEqual(t, knotsToMeterPerSecond(-10), -5.14444)
+})
+
+test ('meterPerSecondToKnots', t => {
+  approxEqual(t, meterPerSecondToKnots(5), 9.71922)
+  approxEqual(t, meterPerSecondToKnots(-10), -19.4384)
+})
+
+test ('knotsToKmPerHour', t => {
+  approxEqual(t, knotsToKmPerHour(1), 1.852)
+  approxEqual(t, knotsToKmPerHour(-2), -3.704)
+})
+
+test ('kmPerHourToKnots', t => {
+  approxEqual(t, kmPerHourToKnots(1.852), 1)
+  approxEqual(t, kmPerHourToKnots(-3.704), -2)
+})
+
+
+
 
 
 
@@ -133,3 +171,16 @@ test('diffAngles', t => {
   t.is(diffAngles(90, 45), 45)
   t.is(diffAngles(270, 90), 180)
 })
+
+const EPSILON = 1e-4
+
+/**
+ * Helper function to check whether two numbers are approximately equal
+ * asserts when that's not the case
+ * @param {Ava} t 
+ * @param {number} a 
+ * @param {number} b 
+ */
+function approxEqual (t, a, b) {
+    t.true(Math.abs(a - b) < EPSILON, `${a} approx equal ${b}`)
+}
