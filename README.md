@@ -38,11 +38,11 @@ Name | Structure | Description
 `LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
 `LatLonTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
 `Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LatLonTuple` | any geolocation structure
-`AngleDistance` | {angle: number, distance: number}
+`AngleDistance` | `{angle: number, distance: number}` | object containing a property `angle` in degrees, and `distance` in meters
 
 TODO: describe which applications use/support which formats
 
-## Conversion functions for locations
+## Location conversions
 
 ### `toLatLng(location: Location) : LatLng`
 
@@ -88,7 +88,7 @@ Calculate the angle and distance between two locations. Returns an object with a
 
 Move to a new location from a start location, angle (in degrees), and distance (in meters).
 
-## Conversion functions for angles and speed
+## Angles and speed
 
 ### `degToRad(angle: number) : number`
 
