@@ -42,8 +42,6 @@ Name | Structure | Description
 `Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
 `AngleDistance` | `{angle: number, distance: number}` | object containing a property `angle` in degrees, and `distance` in meters
 
-TODO: describe which applications use/support which formats
-
 ## Location types and conversions
 
 ### `isLatLon(object: Location) : boolean`
@@ -227,7 +225,7 @@ To prevent issues in this regard, it is safest to use an object instead of an ar
 {lat: 51.9280573, lng: 4.4203587}            // Leaflet, MongoDB, and Google Maps
 ```
 
-TODO: write out which objects are supported by which libraries
+TODO: write out which object stucture are supported by which libraries exactly
 
 
 # Build
@@ -250,12 +248,8 @@ npm test
 # Publish 
 
 - Update version number in `package.json`
+
 - Describe version number, date, and changes in `CHANGELOG.md`
-- Build and test the library
-  ```
-  npm run build
-  npm test
-  ```
 
 - Commit the changes, and create a tag with version number
   ```
