@@ -308,7 +308,10 @@ export function getLatitude (location) {
  *
  * This is a rough estimation.
  *
- * Source: http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
+ * Source: 
+ * 
+ *   http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
+ * 
  * @param {Location} location             Start location
  * @param {AngleDistance} angleDistance   An object with property `angle` in degrees and `distance` in meters
  * @return {Location} Returns the moved location
@@ -384,34 +387,11 @@ export function distanceTo (center, point) {
 
 /**
  * Calculate the average of two or multiple points
- * @param {...{lon: number, lon: number}} points
+ * @param {{lon: number, lon: number}} points
  * @returns {{lon: number, lat: number}}
  */
-// TODO: unit test averageOfPoints
-export function averageOfPoints (...points) {
-  const sum = {
-    lon: 0,
-    lat: 0
-  }
-
-  points.forEach(point => {
-    sum.lon += point.lon
-    sum.lat += point.lat
-  })
-
-  return {
-    lon: sum.lon / points.length,
-    lat: sum.lat / points.length
-  }
-}
-
-/**
- * Calculate the average of two or multiple points in array
- * @param [{lon: number, lon: number}, ...] points
- * @returns {{lon: number, lat: number}}
- */
-// TODO: unit test averageOfPoints
-export function averageOfPointsArray (points) {
+// TODO: refactor and unit test function average
+function average (points) {
   const sum = {
     lon: 0,
     lat: 0
@@ -437,7 +417,8 @@ export function averageOfPointsArray (points) {
  * @return {boolean} Returns true when the point is inside the bounding box
  *                   or on the edge.
  */
-export function pointInsideBoundingBox (point, boundingBox) {
+// TODO: change API to accept a BoundingBox structure, unit test the function
+function insideBoundingBox (point, boundingBox) {
   const lonMin = Math.min(boundingBox[0].lon, boundingBox[1].lon)
   const lonMax = Math.max(boundingBox[0].lon, boundingBox[1].lon)
   const latMin = Math.min(boundingBox[0].lat, boundingBox[1].lat)

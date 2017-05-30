@@ -178,18 +178,20 @@ TODO: implement the following functions
 
 ```js
 
+// @type {[topLeft: Location, bottomRight: Location]} BoundingBox
+
 // ------------------------- stats ------------------------------
 
-function average (locations : Location) : Location
+function average (locations : Location[]) : Location
 
 // ------------------------------ bounding box ------------------------------
 
+function insideBoundingBox(location: Location, boundingBox: BoundingBox) : boolean
 function insidePolygon(location: Location, polygon: Location[]) : boolean
 function insideCircle(location: Location, center: Location, radiusInMeter: number) : boolean
 
 // calculate the smallest bounding box around a list with locations
-function getBoundingBox(locations: Location[], margin): Locations[]
-// -> return a bounding box? or a topLeft and bottomRight location?
+function getBoundingBox(locations: Location[], margin): BoundingBox
 
 // ------------------------------ speed, cpa, ... ------------------------------
 
