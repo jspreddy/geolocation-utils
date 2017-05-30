@@ -15,26 +15,73 @@ export const EARTH_RADIUS = 6378137  // Earth's radius in meters
  */
 
 /**
+ * Test whether an object is an object containing numeric properties `lat` and `lon`
+ * @param {*} object Anything
+ * @param {boolean} Returns true when object is of type LatLon
+ */
+export function isLatLon (object) {
+  return (!!object && 
+      typeof object.lat === 'number' && 
+      typeof object.lon === 'number')
+}
+
+/**
+ * Test whether an object is an object containing numeric properties `lat` and `lng`
+ * @param {*} object Anything
+ * @param {boolean} Returns true when object is of type LatLng
+ */
+export function isLatLng (object) {
+  return (!!object && 
+      typeof object.lat === 'number' && 
+      typeof object.lng === 'number')
+}
+
+/**
+ * Test whether an object is an object containing numeric properties `latitude` and `longitude`
+ * @param {*} object Anything
+ * @param {boolean} Returns true when object is of type LatitudeLongitude
+ */
+export function isLatitudeLongitude (object) {
+  return (!!object && 
+      typeof object.latitude === 'number' && 
+      typeof object.longitude === 'number')
+}
+
+/**
+ * Test whether an object is an array containing two numbers (longitude and latitude)
+ * 
+ * IMPORTANT: this function cannot see the difference between an array with lat/lon
+ *            or an array with lon/lat numbers. It assumes an order lon/lat.
+ * 
+ * @param {*} object Anything
+ * @param {boolean} Returns true when object is of type LonLatTuple
+ */
+export function isLonLatTuple (object) {
+  return (Array.isArray (object) && 
+      typeof object[0] === 'number' && 
+      typeof object[1] === 'number')
+}
+
+/**
  * Get the type of a location object
  * @param {Location} location
  * @return {string} Returns the type of the location object
- *                  Recognized types: 'LatLonTuple', 'LatLon', 'LatLng', 'LatitudeLongitude'
+ *                  Recognized types: 'LonLatTuple', 'LatLon', 'LatLng', 'LatitudeLongitude'
  */
 export function getLocationType (location) {
-  if (Array.isArray (location) && 
-      typeof location[0] === 'number' && typeof location[1] === 'number') {
-    return 'LatLonTuple'
+  if (isLonLatTuple(location)) {
+    return 'LonLatTuple'
   }
   
-  if (location && typeof location.lat === 'number' && typeof location.lon === 'number') {
+  if (isLatLon(location)) {
     return 'LatLon'
   }
   
-  if (location && typeof location.lat === 'number' && typeof location.lng === 'number') {
+  if (isLatLng(location)) {
     return 'LatLng'
   }
   
-  if (location && typeof location.latitude === 'number' && typeof location.longitude === 'number') {
+  if (isLatitudeLongitude(location)) {
     return 'LatitudeLongitude'
   }
 
@@ -42,13 +89,13 @@ export function getLocationType (location) {
 }
 
 /**
- * Create a Location object of a specific type
+ * Create a location object of a specific type
  * @param {number} latitude
  * @param {number} longitude
- * @param {string} type  Available types: 'LatLonTuple', 'LatLon', 'LatLng', 'LatitudeLongitude'
+ * @param {string} type  Available types: 'LonLatTuple', 'LatLon', 'LatLng', 'LatitudeLongitude'
  */
 export function createLocation (latitude, longitude, type) {
-  if (type === 'LatLonTuple') {
+  if (type === 'LonLatTuple') {
     return [longitude, latitude]
   }
   
@@ -73,29 +120,28 @@ export function createLocation (latitude, longitude, type) {
  * @returns {LatLon}
  */
 export function toLatLon (location) {
-  // TODO: make more strict, check whether containing the right types for both lat and lon
-  if (Array.isArray (location)) {
+  if (isLonLatTuple(location)) {
     return {
       lat: location[1],
       lon: location[0]
     }
   }
   
-  if (location && 'lon' in location) {
+  if (isLatLon(location)) {
     return {
       lat: location.lat,
       lon: location.lon
     }
   }
   
-  if (location && 'lng' in location) {
+  if (isLatLng(location)) {
     return {
       lat: location.lat,
       lon: location.lng
     }
   }
   
-  if (location && 'longitude' in location) {
+  if (isLatitudeLongitude(location)) {
     return {
       lat: location.latitude,
       lon: location.longitude
@@ -111,29 +157,28 @@ export function toLatLon (location) {
  * @returns {LatLng}
  */
 export function toLatLng (location) {
-  // TODO: make more strict, check whether containing the right types for both lat and lon
-  if (Array.isArray (location)) {
+  if (isLonLatTuple(location)) {
     return {
       lat: location[1],
       lng: location[0]
     }
   }
   
-  if (location && 'lon' in location) {
+  if (isLatLon(location)) {
     return {
       lat: location.lat,
       lng: location.lon
     }
   }
   
-  if (location && 'lng' in location) {
+  if (isLatLng(location)) {
     return {
       lat: location.lat,
       lng: location.lng
     }
   }
   
-  if (location && 'longitude' in location) {
+  if (isLatitudeLongitude(location)) {
     return {
       lat: location.latitude,
       lng: location.longitude
@@ -149,29 +194,28 @@ export function toLatLng (location) {
  * @returns {LatitudeLongitude}
  */
 export function toLatitudeLongitude (location) {
-  // TODO: make more strict, check whether containing the right types for both lat and lon
-  if (Array.isArray (location)) {
+  if (isLonLatTuple(location)) {
     return {
       latitude: location[1],
       longitude: location[0]
     }
   }
   
-  if (location && 'lon' in location) {
+  if (isLatLon(location)) {
     return {
       latitude: location.lat,
       longitude: location.lon
     }
   }
   
-  if (location && 'lng' in location) {
+  if (isLatLng(location)) {
     return {
       latitude: location.lat,
       longitude: location.lng
     }
   }
   
-  if (location && 'longitude' in location) {
+  if (isLatitudeLongitude(location)) {
     return {
       latitude: location.latitude,
       longitude: location.longitude
@@ -190,20 +234,19 @@ export function toLatitudeLongitude (location) {
  * @returns {LonLatTuple}
  */
 export function toLonLatTuple (location) {
-  // TODO: make more strict, check whether containing the right types for both lat and lon
-  if (Array.isArray (location)) {
+  if (isLonLatTuple(location)) {
     return [location[0], location[1]]
   }
   
-  if (location && 'lon' in location) {
+  if (isLatLon(location)) {
     return [location.lon, location.lat]
   }
   
-  if (location && 'lng' in location) {
+  if (isLatLng(location)) {
     return [location.lng, location.lat]
   }
   
-  if (location && 'longitude' in location) {
+  if (isLatitudeLongitude(location)) {
     return [location.longitude, location.latitude]
   }
 
@@ -216,19 +259,19 @@ export function toLonLatTuple (location) {
  * @return {number} Returns the longitude
  */
 export function getLongitude (location) {
-  if (Array.isArray (location) && typeof location[0] === 'number') {
+  if (isLonLatTuple(location)) {
     return location[0]
   }
   
-  if (location && typeof location.lon === 'number') {
+  if (isLatLon(location)) {
     return location.lon
   }
   
-  if (location && typeof location.lng === 'number') {
+  if (isLatLng(location)) {
     return location.lng
   }
   
-  if (location && typeof location.longitude === 'number') {
+  if (isLatitudeLongitude(location)) {
     return location.longitude
   }
 
@@ -241,15 +284,19 @@ export function getLongitude (location) {
  * @return {number} Returns the latitude
  */
 export function getLatitude (location) {
-  if (Array.isArray (location) && typeof location[1] === 'number') {
+  if (isLonLatTuple(location)) {
     return location[1]
   }
   
-  if (location && typeof location.lat === 'number') {
+  if (isLatLon(location)) {
     return location.lat
   }
   
-  if (location && typeof location.latitude === 'number') {
+  if (isLatLng(location)) {
+    return location.lat
+  }
+  
+  if (isLatitudeLongitude(location)) {
     return location.latitude
   }
 

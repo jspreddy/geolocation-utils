@@ -4,6 +4,7 @@
 # 2017-05-29, version 0.2.0
 
 - Implemented support for `{lat, lng}` format, and corresponding function `toLatLng`.
+- Implemented `isLatLon`, `isLatLng`, `isLatitudeLongitude`, `isLonLatTuple`, `getLocationType`, `createLocation`.
 - Implemented `getLatitude` and `getLongitude`.
 - Implemented `angleAndDistanceTo`, `angleTo`, `distanceTo`, `moveTo`.
 - Implemented conversion functions `degToRad`, `radToDeg`, `knotsToMeterPerSecond`, `meterPerSecondToKnots`, `knotsToKmPerHour`, and `kmPerHourToKnots`.

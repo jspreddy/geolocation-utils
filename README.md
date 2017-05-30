@@ -2,6 +2,8 @@
 
 A utility library for calculations with geolocations.
 
+`geolocation-utils` supports various location formats (like `[lon, lat]` and `{lat, lng}`). The library uses plain objects and arrays only. This makes it easy to interact with other libraries, REST API's, and to serialize/deserialize data for local storage.
+
 # Install
 
 ```
@@ -36,13 +38,39 @@ Name | Structure | Description
 `LatLon` | `{lat: number, lon: number}` | lat/lon object
 `LatLng` | `{lat: number, lng: number}` | lat/lng object
 `LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
-`LatLonTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
-`Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LatLonTuple` | any geolocation structure
+`LonLatTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
+`Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
 `AngleDistance` | `{angle: number, distance: number}` | object containing a property `angle` in degrees, and `distance` in meters
 
 TODO: describe which applications use/support which formats
 
-## Location conversions
+## Location types and conversions
+
+### `isLatLon(object: Location) : boolean`
+
+Test whether an `object` is an object containing numeric properties `lat` and `lon`.
+
+### `isLatLng(object: Location) : boolean`
+
+Test whether an `object` is an object containing numeric properties `lat` and `lng`.
+
+### `isLatisLatitudeLongitudeLng(object: Location) : boolean`
+
+Test whether an `object` is an object containing numeric properties `latitude` and `longitude`.
+
+### `isLonLatTuple(object: Location) : boolean`
+
+Test whether an `object` is an array containing two numbers (longitude and latitude).
+
+### `getLocationType(location: Location) : string`
+
+Get the type of a location object. Returns the type of the location object.
+Recognized types: `'LonLatTuple'`, `'LatLon'`, `'LatLng'`, `'LatitudeLongitude'`.
+
+### `createLocation(latitude: number, longitude: number, type: string) : Location`
+
+Create a location object of a specific type. 
+Available types: `'LonLatTuple'`, `'LatLon'`, `'LatLng'`, `'LatitudeLongitude'`.
 
 ### `toLatLng(location: Location) : LatLng`
 
@@ -56,7 +84,7 @@ Convert a location into an object with properties `lat` and `lon`.
 
 Convert a location into an object with properties `latitude` and `longitude`
 
-### `toLatLonTuple(location: Location) : LatLonTuple`
+### `toLonLatTuple(location: Location) : LonLatTuple`
 
 Convert a location into a tuple `[longitude, latitude]`, as used in the geojson standard
 
@@ -182,12 +210,12 @@ Yeah, it has bitten you probably too. What is the correct order of a geolocation
 
 A nice overview is written down by Tom Macwright in the blog [*lon lat lon lat*](http://www.macwright.org/lonlat/). Here a copy (with some additions):
 
-Category        | [lon, lat]                                                       | [lat, lon]
---------------- | ---------------------------------------------------------------- | ----------------------------------------
-formats         | GeoJSON <br>KML <br>Shapefile <br>WKT <br> WKB <br>geobuf        | GeoRSS <br>Encoded Polylines (Google)
-javascript apis | OpenLayers <br>d3 <br>ArcGIS API for JavaScript <br>Mapbox GL JS | Leaflet <br>Google Maps API
-mobile apis     | Tangram ES                                                       | Google Maps iOS/Android <br>Apple MapKit
-misc            | OSRM <br>MongoDB <br>Redis
+Category        | [lon, lat]                                              | [lat, lon]
+--------------- | ------------------------------------------------------- | -------------------------------------
+formats         | GeoJSON, KML, Shapefile, WKT,  WKB, geobuf              | GeoRSS, Encoded Polylines (Google)
+javascript apis | OpenLayers, d3, ArcGIS API for JavaScript, Mapbox GL JS | Leaflet, Google Maps API
+mobile apis     | Tangram ES                                              | Google Maps iOS/Android, Apple MapKit
+misc            | OSRM, MongoDB, Redis                                    |
 
 The `geolocation-utils` library supports the `[lon, lat]` format.
 

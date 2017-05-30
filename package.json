@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
-    "test": "ava"
+    "test": "ava --verbose"
   },
   "repository": {
     "type": "git",

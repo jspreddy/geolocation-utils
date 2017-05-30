@@ -1,5 +1,7 @@
 import test from 'ava'
 import { 
+  isLatLon, isLatLng, isLatitudeLongitude, isLonLatTuple,
+  getLocationType, createLocation,
   toLatitudeLongitude, toLatLon, toLatLng, toLonLatTuple,
   getLatitude, getLongitude,
   radToDeg, degToRad, 
@@ -8,8 +10,89 @@ import {
   averageAngles, diffAngles 
 } from '../src/geo'
 
-// TODO: test getLocationType, and describe in API
-// TODO: test createLocation, and describe in API
+test ('isLatLon', t => {
+  t.is(isLatLon({lat: 0, lon: 0}), true)
+  t.is(isLatLon({lat: 0, lon: 0, foo: 'bar'}), true)
+  t.is(isLatLon({lat: 0, lng: 0}), false)
+  t.is(isLatLon({latitude: 0, longitude: 0}), false)
+  t.is(isLatLon([0, 0]), false)
+  t.is(isLatLon({lat: 0, lon: 'foo'}), false)
+  t.is(isLatLon({lat: 'foo', lon: 0}), false)
+  t.is(isLatLon({lat: 0}), false)
+  t.is(isLatLon({lon: 0}), false)
+  t.is(isLatLon({}), false)
+  t.is(isLatLon(2), false)
+  t.is(isLatLon(null), false)
+})
+
+test ('isLatLng', t => {
+  t.is(isLatLng({lat: 0, lng: 0}), true)
+  t.is(isLatLng({lat: 0, lng: 0, foo: 'bar'}), true)
+
+  t.is(isLatLng({lat: 0, lon: 0}), false)
+  t.is(isLatLng({latitude: 0, longitude: 0}), false)
+  t.is(isLatLng([0, 0]), false)
+
+  t.is(isLatLng({lat: 0, lng: 'foo'}), false)
+  t.is(isLatLng({lat: 'foo', lng: 0}), false)
+  t.is(isLatLng({lat: 0}), false)
+  t.is(isLatLng({lng: 0}), false)
+  t.is(isLatLng({}), false)
+  t.is(isLatLng(2), false)
+  t.is(isLatLng(null), false)
+})
+
+test ('isLatitudeLongitude', t => {
+  t.is(isLatitudeLongitude({latitude: 0, longitude: 0}), true)
+  t.is(isLatitudeLongitude({latitude: 0, longitude: 0, foo: 'bar'}), true)
+
+  t.is(isLatitudeLongitude({lat: 0, lon: 0}), false)
+  t.is(isLatitudeLongitude({lat: 0, lng: 0}), false)
+  t.is(isLatitudeLongitude([0, 0]), false)
+
+  t.is(isLatitudeLongitude({latitude: 0, longitude: 'foo'}), false)
+  t.is(isLatitudeLongitude({latitude: 'foo', longitude: 0}), false)
+  t.is(isLatitudeLongitude({latitude: 0}), false)
+  t.is(isLatitudeLongitude({longitude: 0}), false)
+  t.is(isLatitudeLongitude({}), false)
+  t.is(isLatitudeLongitude(2), false)
+  t.is(isLatitudeLongitude(null), false)
+})
+
+test ('isLonLatTuple', t => {
+  t.is(isLonLatTuple([0, 0]), true)
+  t.is(isLonLatTuple([0, 0, 0]), true)
+
+  t.is(isLonLatTuple({lat: 0, lon: 0}), false)
+  t.is(isLonLatTuple({lat: 0, lng: 0}), false)
+  t.is(isLonLatTuple({latitude: 0, longitude: 0}), false)
+
+  t.is(isLonLatTuple([]), false)
+  t.is(isLonLatTuple([0, 'foo']), false)
+  t.is(isLonLatTuple(['foo', 0]), false)
+  t.is(isLonLatTuple({}), false)
+  t.is(isLonLatTuple(2), false)
+  t.is(isLonLatTuple(null), false)
+})
+
+test ('getLocationType', t => {
+  t.is(getLocationType({lat: 0, lon: 0}), 'LatLon')
+  t.is(getLocationType({lat: 0, lng: 0}), 'LatLng')
+  t.is(getLocationType({latitude: 0, longitude: 0}), 'LatitudeLongitude')
+  t.is(getLocationType([0, 0]), 'LonLatTuple')
+
+  t.throws(() => { getLocationType({foo: 'bar'}) }, /Unknown location format/)
+  t.throws(() => { getLocationType({lat: 0}) }, /Unknown location format/)
+})
+
+test ('createLocation', t => {
+  t.deepEqual(createLocation(1, 2, 'LatLon'), {lat: 1, lon: 2})
+  t.deepEqual(createLocation(1, 2, 'LatLng'), {lat: 1, lng: 2})
+  t.deepEqual(createLocation(1, 2, 'LatitudeLongitude'), {latitude: 1, longitude: 2})
+  t.deepEqual(createLocation(1, 2, 'LonLatTuple'), [2, 1])
+  
+  t.throws(() => { getLocationType(0, 0, 'foo') }, /Unknown location format/)
+})
 
 test ('toLatitudeLongitude', t => {
   t.deepEqual(toLatitudeLongitude([4, 51]), {latitude: 51, longitude: 4})
@@ -131,76 +214,79 @@ test ('kmPerHourToKnots', t => {
 })
 
 test('angleAndDistanceTo', t => {
-  t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.00089831528412,lon:0}),
+  approxDeepEqual(t, angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.00089831528412,lon:0}),
     {distance:99.99999999985421,angle:0})
 
-  t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.001796630568236,lon:0}),
+  approxDeepEqual(t, angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.001796630568236,lon:0}),
     {distance:199.99999999970845,angle:0})
 
-  t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat: 51.000635204829045,lon:0.0010093504645301253}),
+  approxDeepEqual(t, angleAndDistanceTo({lat: 51, lon: 0}, {lat: 51.000635204829045,lon:0.0010093504645301253}),
     {distance:99.99965773348121,angle:44.999411688665425})
 
-  t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}),
+  approxDeepEqual(t, angleAndDistanceTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}),
     {distance:99.99999999843808,angle:89.99944533657323})
 
-  t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:50.99910168471588,lon:0}),
+  approxDeepEqual(t, angleAndDistanceTo({lat: 51, lon: 0}, {lat:50.99910168471588,lon:0}),
     {distance:99.99999999985421,angle:180})
 
-  t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51,lon:-0.001427437116126087}),
+  approxDeepEqual(t, angleAndDistanceTo({lat: 51, lon: 0}, {lat:51,lon:-0.001427437116126087}),
     {distance:99.99999999843808,angle:-89.99944533657323}) // = 270 degrees
 })
 
 test('angleAndDistanceTo (different location formats)', t => {
-  t.deepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.00089831528412,lon:0}),
+  approxDeepEqual(t, angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.00089831528412,lon:0}),
     {distance:99.99999999985421,angle:0})
-  t.deepEqual(angleAndDistanceTo({lat: 51, lng: 0}, {lat:51.00089831528412,lng:0}),
+
+  approxDeepEqual(t, angleAndDistanceTo({lat: 51, lng: 0}, {lat:51.00089831528412,lng:0}),
     {distance:99.99999999985421,angle:0})
-  t.deepEqual(angleAndDistanceTo({latitude: 51, longitude: 0}, {latitude:51.00089831528412,longitude:0}),
+
+  approxDeepEqual(t, angleAndDistanceTo({latitude: 51, longitude: 0}, {latitude:51.00089831528412,longitude:0}),
     {distance:99.99999999985421,angle:0})
-  t.deepEqual(angleAndDistanceTo([0, 51], [0, 51.00089831528412]),
+
+  approxDeepEqual(t, angleAndDistanceTo([0, 51], [0, 51.00089831528412]),
     {distance:99.99999999985421,angle:0})
 
   t.throws(() => { angleAndDistanceTo({foo: 'bar'}) }, /Unknown location format/)
 })
 
 test('angleTo', t => {
-  t.deepEqual(angleTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}), 89.99944533657323)
+  approxDeepEqual(t, angleTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}), 89.99944533657323)
 })
 
 test('distanceTo', t => {
-  t.deepEqual(distanceTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}), 99.99999999843808)
+  approxDeepEqual(t, distanceTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}), 99.99999999843808)
 })
 
 test('moveTo', t => {
-  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 0}),
+  approxDeepEqual(t, moveTo({lat: 51, lon: 0}, {distance: 100, angle: 0}),
     {lat:51.00089831528412,lon:0})
 
-  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 200, angle: 0}),
+  approxDeepEqual(t, moveTo({lat: 51, lon: 0}, {distance: 200, angle: 0}),
     {lat:51.001796630568236,lon:0})
 
-  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 45}),
+  approxDeepEqual(t, moveTo({lat: 51, lon: 0}, {distance: 100, angle: 45}),
     {lat: 51.000635204829045,lon:0.0010093504645301253})
 
-  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 90}),
+  approxDeepEqual(t, moveTo({lat: 51, lon: 0}, {distance: 100, angle: 90}),
     {lat:51,lon:0.001427437116126087})
 
-  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 180}),
+  approxDeepEqual(t, moveTo({lat: 51, lon: 0}, {distance: 100, angle: 180}),
     {lat:50.99910168471588,lon:1.7481062952479413e-19})
 
-  t.deepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 270}),
+  approxDeepEqual(t, moveTo({lat: 51, lon: 0}, {distance: 100, angle: 270}),
     {lat:51,lon:-0.001427437116126087})
 })
 
 test('moveTo (different location formats)', t => {
   const angleDistance = {distance: 100, angle: 45}
 
-  t.deepEqual(moveTo({lat: 51, lon: 0}, angleDistance),
+  approxDeepEqual(t, moveTo({lat: 51, lon: 0}, angleDistance),
     {lat: 51.000635204829045,lon:0.0010093504645301253})
-  t.deepEqual(moveTo({lat: 51, lng: 0}, angleDistance),
+  approxDeepEqual(t, moveTo({lat: 51, lng: 0}, angleDistance),
     {lat: 51.000635204829045,lng:0.0010093504645301253})
-  t.deepEqual(moveTo({latitude: 51, longitude: 0}, angleDistance),
+  approxDeepEqual(t, moveTo({latitude: 51, longitude: 0}, angleDistance),
     {latitude: 51.000635204829045,longitude:0.0010093504645301253})
-  t.deepEqual(moveTo([0, 51], angleDistance), 
+  approxDeepEqual(t, moveTo([0, 51], angleDistance), 
     [0.0010093504645301253, 51.000635204829045])
 
   t.throws(() => { moveTo({foo: 'bar'}, {angle: 0, distance: 0}) }, /Unknown location format/)
@@ -226,15 +312,38 @@ test('diffAngles', t => {
   t.is(diffAngles(270, 90), 180)
 })
 
-const EPSILON = 1e-4
-
 /**
  * Helper function to check whether two numbers are approximately equal
  * asserts when that's not the case
  * @param {Ava} t 
- * @param {number} a 
- * @param {number} b 
+ * @param {number} value 
+ * @param {number} expected 
  */
-function approxEqual (t, a, b) {
-    t.true(Math.abs(a - b) < EPSILON, `${a} approx equal ${b}`)
+function approxEqual (t, value, expected) {
+  t.is(round(value), round(expected))
 }
+
+/**
+ * Helper function to check whether two objects or arrays are approximately deep equal
+ * asserts when that's not the case
+ * @param {Ava} t 
+ * @param {number} value 
+ * @param {number} expected 
+ */
+function approxDeepEqual (t, value, expected) {
+  t.is(JSON.stringify(value, replacer), JSON.stringify(expected, replacer))
+}
+
+function replacer (key, value) {
+  if (typeof value === 'number') {
+    return round(value)
+  }
+
+  return value
+}
+
+function round (value) {
+    return Math.round(value / EPSILON) * EPSILON
+}
+
+const EPSILON = 1e-3
