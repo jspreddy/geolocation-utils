@@ -114,6 +114,26 @@ Calculate the angle and distance between two locations. Returns an object with a
 
 Move to a new location from a start location, angle (in degrees), and distance (in meters).
 
+## Normalize data
+
+### `normalizeAngle(angle: number) : number`
+
+Normalize an angle in degrees into the range `[0, 360)` (lower bound included, upper bound excluded).
+
+### `normalizeLatitude(latiude: number) : number`
+
+Normalize a latitude into the range `[-90, 90]` (upper and lower bound included). For example a latitude of `91` is normalized into `89` (crossed the pool one degree).
+
+### `normalizeLongitude(longitude: number) : number`
+
+Normalize a longitude into the range `(-180, 180]` (lower bound excluded, upper bound included).
+
+### `normalizeLocation(location: Location): Location`
+
+Normalize the longitude and latitude of a location.
+Latitude will be in the range `[-90, 90]` (upper and lower bound included).
+Lontitude will be in the range (-180, 180] (lower bound excluded, upper bound included).
+
 ## Angles and speed
 
 ### `degToRad(angle: number) : number`
@@ -157,35 +177,19 @@ Returns the earth radius in meters: `6378137`.
 TODO: implement the following functions
 
 ```js
-// Normalize a geo location into the range:
-// longitude [-180, 180)
-// latitude [-90, 90]
-function normalizeLocation(location: Location) : Location
-
-// Normalize an angle into the range [0, 360)
-function normalizeAngle(angle: number) : number
-
-// Calculate the smallest difference between two angles. Always smaller or equal to 180 degrees.
-function diffAngles (angle1: number, angle2: number) : number 
 
 // ------------------------- stats ------------------------------
 
-function averageOfLocations (locations : Location) : Location
-
-function averageOfAngles (angle1: number, angle2: number)
-
+function average (locations : Location) : Location
 
 // ------------------------------ bounding box ------------------------------
 
-function locationInsidePolygon(location: Location, boundingBox: Location[]) : boolean
-function locationInsideCircle(location: Location, center: Location, radiusInMeter: number) : boolean
+function insidePolygon(location: Location, polygon: Location[]) : boolean
+function insideCircle(location: Location, center: Location, radiusInMeter: number) : boolean
 
 // calculate the smallest bounding box around a list with locations
 function getBoundingBox(locations: Location[], margin): Locations[]
-
-
-// utility functions to create a boundingbox?
-
+// -> return a bounding box? or a topLeft and bottomRight location?
 
 // ------------------------------ speed, cpa, ... ------------------------------
 
@@ -241,9 +245,18 @@ TODO: create a bundle for browser usage
 
 # Test
 
+To test the library (using Ava), run:
+
 ```
 npm test 
 ```
+
+To automatically re-test on change of source code, run:
+
+```
+npm test -- --watch
+```
+
 
 # Publish 
 

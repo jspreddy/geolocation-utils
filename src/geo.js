@@ -453,13 +453,13 @@ export function pointInsideBoundingBox (point, boundingBox) {
  * @return {number} Returns the normalized angle (degrees)
  */
 export function normalizeAngle(angle) {
-  let normalized = angle
+  let normalized = angle % 360
 
-  while (normalized < 0) {
+  if (normalized < 0) {
     normalized += 360
   }
 
-  while (normalized >= 360) {
+  if (normalized >= 360) {
     normalized -= 360
   }
 
@@ -467,55 +467,70 @@ export function normalizeAngle(angle) {
 }
 
 /**
- * Calculate the smallest difference between two angles. Always smaller or equal
- * to 180 degrees.
- * @param {number} angle1   An angle in degrees
- * @param {number} angle2   An angle in degrees
- * @return {number} The difference between the angles in degrees
+ * Normalize a latitude into the range [-90, 90] (upper and lower bound included)
+ * 
+ * See https://stackoverflow.com/questions/13368525/modulus-to-limit-latitude-and-longitude-values
+ * 
+ * @param {number} latitude 
+ * @return {number} Returns the normalized latitude
  */
-export function diffAngles (angle1, angle2) {
-  // normalize the angles and make sure they are ordered a1 smallest, a2 largest
-  let a1 = normalizeAngle(angle1)
-  let a2 = normalizeAngle(angle2)
-  if (a1 > a2) {
-    [a1, a2] = [a2, a1]  // swap
+export function normalizeLatitude (latitude) {
+  return Math.asin(Math.sin((latitude / 180) * Math.PI)) * (180 / Math.PI);
+}
+/**
+ * Normalize a longitude into the range (-180, 180] (lower bound excluded, upper bound included)
+ * 
+ * @param {number} longitude 
+ * @return {number} Returns the normalized longitude
+ */
+export function normalizeLongitude (longitude) {
+  let normalized = longitude % 360
+
+  if (normalized > 180) {
+    normalized -= 360
   }
 
-  const diff = a2 - a1
-  return diff > 180
-      ? 360 - diff
-      : diff
+  if (normalized <= -180) {
+    normalized += 360
+  }
+
+  return normalized
 }
 
 /**
- * Calculate the average of two angles. 
- * The function positions the average halfway the smallest of the two differences
- * in angles:
- *
- *   averageAngles(90, 180), 135)
- *   averageAngles(-10, 10), 0)
- *   averageAngles(20, -40), 350)
- * 
- * @param {number} angle1   An angle in degrees
- * @param {number} angle2   An angle in degrees
- * @return {number} The average of the angles in degrees
+ * Normalize the longitude and latitude of a location.
+ * Latitude will be in the range [-90, 90] (upper and lower bound included)
+ * Lontitude will be in the range (-180, 180] (lower bound excluded, upper bound included)
+ * @param {Location} location 
+ * @return {Location} Returns the normalized location
  */
-export function averageAngles (angle1, angle2) {
-  // normalize the angles and make sure they are ordered a1 smallest, a2 largest
-  let a1 = normalizeAngle(angle1)
-  let a2 = normalizeAngle(angle2)
-  if (a1 > a2) {
-    [a1, a2] = [a2, a1]  // swap
+export function normalizeLocation (location) {
+    if (isLonLatTuple(location)) {
+    return [normalizeLongitude(location[0]), normalizeLatitude(location[1])]
+  }
+  
+  if (isLatLon(location)) {
+    return {
+      lat: normalizeLatitude(location.lat),
+      lon: normalizeLongitude(location.lon)
+    }
+  }
+  
+  if (isLatLng(location)) {
+    return {
+      lat: normalizeLatitude(location.lat),
+      lng: normalizeLongitude(location.lng)
+    }
+  }
+  
+  if (isLatitudeLongitude(location)) {
+    return {
+      latitude: normalizeLatitude(location.latitude),
+      longitude: normalizeLongitude(location.longitude)
+    }
   }
 
-  const diff = a2 - a1
-  if (diff <= 180) {
-    return (a2 + a1) / 2
-  }
-  else {
-    // smallest angle is on the other side of the circle
-    return normalizeAngle((a1 + a2 - 360) / 2)
-  }
+  throw new Error('Unknown location format ' + JSON.stringify(location))
 }
 
 /**

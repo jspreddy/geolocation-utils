@@ -7,7 +7,7 @@ import {
   radToDeg, degToRad, 
   knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
   angleAndDistanceTo, angleTo, distanceTo, moveTo,
-  averageAngles, diffAngles 
+  normalizeAngle, normalizeLatitude, normalizeLongitude, normalizeLocation
 } from '../src/geo'
 
 test ('isLatLon', t => {
@@ -292,24 +292,50 @@ test('moveTo (different location formats)', t => {
   t.throws(() => { moveTo({foo: 'bar'}, {angle: 0, distance: 0}) }, /Unknown location format/)
 })
 
-
-// TODO: review all tests lower down
-
-test('averageAngles', t => {
-  t.is(averageAngles(90, 180), 135)
-  t.is(averageAngles(180, 90), 135)
-  t.is(averageAngles(90, 270), 180)
-  t.is(averageAngles(-10, 10), 0)
-  t.is(averageAngles(350, 10), 0)
-  t.is(averageAngles(20, -40), 350)
-  t.is(averageAngles(320, 20), 350)
+test ('normalizeAngle', t => {
+  t.is(normalizeAngle(0), 0)
+  t.is(normalizeAngle(360), 0)
+  t.is(normalizeAngle(760), 40)
+  t.is(normalizeAngle(45), 45)
+  t.is(normalizeAngle(400), 40)
+  t.is(normalizeAngle(-40), 320)
+  t.is(normalizeAngle(-400), 320)
+  t.is(normalizeAngle(-760), 320)
 })
 
-test('diffAngles', t => {
-  t.is(diffAngles(90, 180), 90)
-  t.is(diffAngles(-20, 10), 30)
-  t.is(diffAngles(90, 45), 45)
-  t.is(diffAngles(270, 90), 180)
+test ('normalizeLatitude', t => {
+  approxEqual(t, normalizeLatitude(0), 0)
+  approxEqual(t, normalizeLatitude(-90), -90)
+  approxEqual(t, normalizeLatitude(90), 90)
+
+  approxEqual(t, normalizeLatitude(91), 89)
+  approxEqual(t, normalizeLatitude(180), 0)
+  approxEqual(t, normalizeLatitude(190), -10)
+
+  approxEqual(t, normalizeLatitude(-91), -89)
+  approxEqual(t, normalizeLatitude(-180), 0)
+  approxEqual(t, normalizeLatitude(-190), 10)
+})
+
+test ('normalizeLongitude', t => {
+  approxEqual(t, normalizeLongitude(0), 0)
+  approxEqual(t, normalizeLongitude(-180), 180)
+  approxEqual(t, normalizeLongitude(180), 180)
+
+  approxEqual(t, normalizeLongitude(360), 0)
+  approxEqual(t, normalizeLongitude(720), 0)
+  approxEqual(t, normalizeLongitude(360 + 180), 180)
+
+  approxEqual(t, normalizeLongitude(-360), 0)
+  approxEqual(t, normalizeLongitude(-720), 0)
+  approxEqual(t, normalizeLongitude(-360 - 180), 180)
+})
+
+test ('normalizeLocation', t => {
+  approxDeepEqual(t, normalizeLocation([360, 91]), [0, 89])
+  approxDeepEqual(t, normalizeLocation({lat: 91, lon: 360}), {lat: 89, lon: 0})
+  approxDeepEqual(t, normalizeLocation({lat: 91, lng: 360}), {lat: 89, lng: 0})
+  approxDeepEqual(t, normalizeLocation({latitude: 91, longitude: 360}), {latitude: 89, longitude: 0})
 })
 
 /**
