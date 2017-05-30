@@ -1,6 +1,6 @@
 # geolocation-utils changelog
 
-# not yet releasd, version 0.3.0
+# 2017-05-30, version 0.3.0
 
 - Implemented `isLatLon`, `isLatLng`, `isLatitudeLongitude`, `isLonLatTuple`, `getLocationType`, `createLocation`.
 - Implemented `normalizeAngle`, `normalizeLatitude`, `normalizeLongitude`, `normalizeLocation`.
