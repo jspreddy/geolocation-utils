@@ -43,7 +43,7 @@ Name | Structure | Description
 `Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
 `AngleDistance` | `{angle: number, distance: number}` | object containing a property `angle` in degrees, and `distance` in meters
 
-## Location types and conversions
+## Location conversions
 
 ### `isLatLon(object: Location) : boolean`
 
@@ -53,7 +53,7 @@ Test whether an `object` is an object containing numeric properties `lat` and `l
 
 Test whether an `object` is an object containing numeric properties `lat` and `lng`.
 
-### `isLatisLatitudeLongitudeLng(object: Location) : boolean`
+### `isLatitudeLongitude(object: Location) : boolean`
 
 Test whether an `object` is an object containing numeric properties `latitude` and `longitude`.
 
@@ -115,7 +115,7 @@ Calculate the angle and distance between two locations. Returns an object with a
 
 Move to a new location from a start location, angle (in degrees), and distance (in meters).
 
-## Normalize data
+## Normalization
 
 ### `normalizeAngle(angle: number) : number`
 
@@ -135,7 +135,7 @@ Normalize the longitude and latitude of a location.
 Latitude will be in the range `[-90, 90]` (upper and lower bound included).
 Lontitude will be in the range (-180, 180] (lower bound excluded, upper bound included).
 
-## Angles and speed
+## Unit conversions
 
 ### `degToRad(angle: number) : number`
 
