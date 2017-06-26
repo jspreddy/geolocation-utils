@@ -7,7 +7,7 @@ import {
   radToDeg, degToRad, 
   knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
   angleAndDistanceTo, angleTo, distanceTo, moveTo,
-  average,
+  average, getBoundingBox,
   normalizeAngle, normalizeLatitude, normalizeLongitude, normalizeLocation
 } from '../src/geo'
 
@@ -306,6 +306,28 @@ test('average', t => {
   t.deepEqual(average(), null)
   
   t.throws(() => { average([{foo: 'bar'}]) }, /Unknown location format/)
+})
+
+test('getBoundingBox', t => {
+  t.deepEqual(getBoundingBox([{lat: 30, lon: 10}, {lat: 50, lon: 40}]), 
+      {topLeft: {lat: 50, lon: 10}, bottomRight: {lat: 30, lon: 40}})
+
+  t.deepEqual(getBoundingBox([{lat: 30, lng: 10}, {lat: 50, lng: 40}]), 
+      {topLeft: {lat: 50, lng: 10}, bottomRight: {lat: 30, lng: 40}})
+
+  t.deepEqual(getBoundingBox([{latitude: 30, longitude: 10}, {latitude: 50, longitude: 40}]), 
+      {topLeft: {latitude: 50, longitude: 10}, bottomRight: {latitude: 30, longitude: 40}})
+
+  t.deepEqual(getBoundingBox([[10, 30], [40, 50]]), {topLeft:[10, 50], bottomRight: [40, 30]})
+
+  // mixed content
+  t.deepEqual(getBoundingBox([{latitude: 30, longitude: 10}, {lat: 50, lon: 40}]), 
+      {topLeft: {latitude: 50, longitude: 10}, bottomRight: {latitude: 30, longitude: 40}})
+
+  t.deepEqual(getBoundingBox([]), {topLeft: null, bottomRight: null})
+  t.deepEqual(getBoundingBox(), {topLeft: null, bottomRight: null})
+  
+  t.throws(() => { getBoundingBox([{foo: 'bar'}]) }, /Unknown location format/)
 })
 
 test ('normalizeAngle', t => {

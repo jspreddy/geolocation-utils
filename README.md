@@ -41,6 +41,7 @@ Name | Structure | Description
 `LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
 `LonLatTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
 `Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
+`BoundingBox` | `{[topLeft: Location, bottomRight: Location]}` | top left and bottom right points describing a bounding box
 `AngleDistance` | `{angle: number, distance: number}` | object containing a property `angle` in degrees, and `distance` in meters
 
 ## Location conversions

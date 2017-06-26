@@ -534,6 +534,34 @@ export function average (locations) {
 }
 
 /**
+ * Get the bounding box of a list with locations
+ * @param {Locations[]} locations
+ * @return {BoundingBox} Returns a bounding box described by it's top left 
+ *                       and bottom right location
+ */
+export function getBoundingBox (locations) {
+  // TODO:  extend getBoundingBox with support for margin in meters
+
+  if (!Array.isArray(locations) || locations.length === 0) {
+    return {
+      topLeft: null, 
+      bottomRight: null
+    }
+  }
+
+  const type = getLocationType(locations[0])
+  const topLeftLat = Math.max(...locations.map(getLatitude))
+  const topLeftLon = Math.min(...locations.map(getLongitude))
+  const bottomRightLat = Math.min(...locations.map(getLatitude))
+  const bottomRightLon = Math.max(...locations.map(getLongitude))
+  
+  return {
+    topLeft: createLocation(topLeftLat, topLeftLon, type),
+    bottomRight: createLocation(bottomRightLat, bottomRightLon, type)
+  }
+}
+
+/**
  * Calculate the average of a list with numbers
  * @param {number[]} values 
  * @return {number}
@@ -550,6 +578,7 @@ function avg (values) {
 function sum (values) {
   return values.reduce((a, b) => a + b, 0) 
 }
+
 
 /**
  * Convert an angle in degrees into an angle in radians
