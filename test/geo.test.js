@@ -7,6 +7,7 @@ import {
   radToDeg, degToRad, 
   knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
   angleAndDistanceTo, angleTo, distanceTo, moveTo,
+  average,
   normalizeAngle, normalizeLatitude, normalizeLongitude, normalizeLocation
 } from '../src/geo'
 
@@ -290,6 +291,21 @@ test('moveTo (different location formats)', t => {
     [0.0010093504645301253, 51.000635204829045]))
 
   t.throws(() => { moveTo({foo: 'bar'}, {angle: 0, distance: 0}) }, /Unknown location format/)
+})
+
+test('average', t => {
+  t.deepEqual(average([{lat: 30, lon: 10}, {lat: 50, lon: 30}]), {lat: 40, lon: 20})
+  t.deepEqual(average([{lat: 30, lng: 10}, {lat: 50, lng: 30}]), {lat: 40, lng: 20})
+  t.deepEqual(average([{latitude: 30, longitude: 10}, {latitude: 50, longitude: 30}]), {latitude: 40, longitude: 20})
+  t.deepEqual(average([[10, 30], [30, 50]]), [20, 40])
+
+  // mixed content
+  t.deepEqual(average([{latitude: 30, longitude: 10}, {lat: 50, lon: 30}]), {latitude: 40, longitude: 20})
+
+  t.deepEqual(average([]), null)
+  t.deepEqual(average(), null)
+  
+  t.throws(() => { average([{foo: 'bar'}]) }, /Unknown location format/)
 })
 
 test ('normalizeAngle', t => {

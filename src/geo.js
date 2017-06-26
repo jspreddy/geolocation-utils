@@ -486,7 +486,7 @@ export function normalizeLongitude (longitude) {
  * @return {Location} Returns the normalized location
  */
 export function normalizeLocation (location) {
-    if (isLonLatTuple(location)) {
+  if (isLonLatTuple(location)) {
     return [normalizeLongitude(location[0]), normalizeLatitude(location[1])]
   }
   
@@ -512,6 +512,43 @@ export function normalizeLocation (location) {
   }
 
   throw new Error('Unknown location format ' + JSON.stringify(location))
+}
+
+/**
+ * Calculate the average of a list with locations
+ * @param {Location[]} locations 
+ * @return {Location} Returns the average location or null when the list is empty
+ *                    Location has the same structure as the first location from
+ *                    the input array.
+ */
+export function average (locations) {
+  if (!Array.isArray(locations) || locations.length === 0) {
+    return null
+  }
+
+  const first = locations[0]
+  const latitude = avg(locations.map(getLatitude))
+  const longitude = avg(locations.map(getLongitude))
+
+  return createLocation(latitude, longitude, getLocationType(first))
+}
+
+/**
+ * Calculate the average of a list with numbers
+ * @param {number[]} values 
+ * @return {number}
+ */
+function avg (values) {
+  return sum(values) / values.length
+}
+
+/**
+ * calculate the sum of a list with numbers
+ * @param {number[]} values 
+ * @return {number} Returns the sum
+ */
+function sum (values) {
+  return values.reduce((a, b) => a + b, 0) 
 }
 
 /**

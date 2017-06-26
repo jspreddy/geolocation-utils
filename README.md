@@ -135,6 +135,12 @@ Normalize the longitude and latitude of a location.
 Latitude will be in the range `[-90, 90]` (upper and lower bound included).
 Lontitude will be in the range (-180, 180] (lower bound excluded, upper bound included).
 
+## Stats
+
+### `average(locations: Location[]): Location | null`
+
+Calculate the average of a list with locations. Returns `null` when the input is an empty Array or no Array. Returned Location format is the same as the format of the first entry of `locations`. The array can contain mixed content.
+
 ## Unit conversions
 
 ### `degToRad(angle: number) : number`
@@ -180,10 +186,6 @@ TODO: implement the following functions
 ```js
 
 // @type {[topLeft: Location, bottomRight: Location]} BoundingBox
-
-// ------------------------- stats ------------------------------
-
-function average (locations : Location[]) : Location
 
 // ------------------------------ bounding box ------------------------------
 

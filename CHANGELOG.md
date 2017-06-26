@@ -1,5 +1,11 @@
 # geolocation-utils changelog
 
+
+# not yet released, version 0.4.0
+
+- Implemented `average`.
+
+
 # 2017-05-30, version 0.3.0
 
 - Implemented `isLatLon`, `isLatLng`, `isLatitudeLongitude`, `isLonLatTuple`, `getLocationType`, `createLocation`.
