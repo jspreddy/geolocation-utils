@@ -44,7 +44,25 @@ Name | Structure | Description
 `BoundingBox` | `{[topLeft: Location, bottomRight: Location]}` | top left and bottom right points describing a bounding box
 `AngleDistance` | `{angle: number, distance: number}` | object containing a property `angle` in degrees, and `distance` in meters
 
-## Location conversions
+## Conversions
+
+### `createLocation(latitude: number, longitude: number, type: string) : Location`
+
+Create a location object of a specific type. 
+Available types: `'LonLatTuple'`, `'LatLon'`, `'LatLng'`, `'LatitudeLongitude'`.
+
+### `getLatitude(location: Location) : LatLng`
+
+Get the latitude of a location
+
+### `getLocationType(location: Location) : string`
+
+Get the type of a location object. Returns the type of the location object.
+Recognized types: `'LonLatTuple'`, `'LatLon'`, `'LatLng'`, `'LatitudeLongitude'`.
+
+### `getLongitude(location: Location) : LatLng`
+
+Get the longitude of a location
 
 ### `isLatLon(object: Location) : boolean`
 
@@ -61,16 +79,6 @@ Test whether an `object` is an object containing numeric properties `latitude` a
 ### `isLonLatTuple(object: Location) : boolean`
 
 Test whether an `object` is an array containing two numbers (longitude and latitude).
-
-### `getLocationType(location: Location) : string`
-
-Get the type of a location object. Returns the type of the location object.
-Recognized types: `'LonLatTuple'`, `'LatLon'`, `'LatLng'`, `'LatitudeLongitude'`.
-
-### `createLocation(latitude: number, longitude: number, type: string) : Location`
-
-Create a location object of a specific type. 
-Available types: `'LonLatTuple'`, `'LatLon'`, `'LatLng'`, `'LatitudeLongitude'`.
 
 ### `toLatLng(location: Location) : LatLng`
 
@@ -90,15 +98,15 @@ Convert a location into a tuple `[longitude, latitude]`, as used in the geojson 
 
 > Note that for example Leaflet uses a tuple `[latitude, longitude]` instead, be careful!
 
-### `getLatitude(location: Location) : LatLng`
+## Calculations
 
-Get the latitude of a location
+### `average(locations: Location[]): Location | null`
 
-### `getLongitude(location: Location) : LatLng`
+Calculate the average of a list with locations. Returns `null` when the input is an empty Array or no Array. Returned Location format is the same as the format of the first entry of `locations`. The array can contain mixed content.
 
-Get the longitude of a location
+### `angleAndDistanceTo (from: Location, to: Location) : AngleDistance`
 
-## Location transforms
+Calculate the angle and distance between two locations. Returns an object with a property `angle` in degrees, and a property `distance` in meters.
 
 ### `angleTo(from: Location, to: Location) : number`
 
@@ -108,23 +116,13 @@ Calculate the angle from one location to another location. Returns an angle in d
 
 Calculate the distance between two locations. Returns a distance in meters.
 
-### `angleAndDistanceTo (from: Location, to: Location) : AngleDistance`
+### `getBoundingBox(locations: Location[], margin = 0): BoundingBox`
 
-Calculate the angle and distance between two locations. Returns an object with a property `angle` in degrees, and a property `distance` in meters.
+Get the bounding box of a list with locations, optionally with an extra margin around it in meters. Returns a `BoundingBox` with topLeft and bottomRight location.
 
 ### `moveTo(center: Location, angleDistance: AngleDistance): Location`
 
 Move to a new location from a start location, angle (in degrees), and distance (in meters).
-
-## Calculations
-
-### `average(locations: Location[]): Location | null`
-
-Calculate the average of a list with locations. Returns `null` when the input is an empty Array or no Array. Returned Location format is the same as the format of the first entry of `locations`. The array can contain mixed content.
-
-### `getBoundingBox(locations: Location[], margin = 0): BoundingBox`
-
-Get the bounding box of a list with locations, optionally with an extra margin around it in meters. Returns a `BoundingBox` with topLeft and bottomRight location.
 
 ## Normalization
 
@@ -146,7 +144,7 @@ Normalize the longitude and latitude of a location.
 Latitude will be in the range `[-90, 90]` (upper and lower bound included).
 Lontitude will be in the range (-180, 180] (lower bound excluded, upper bound included).
 
-## Unit conversions
+## Units
 
 ### `degToRad(angle: number) : number`
 
@@ -189,8 +187,6 @@ Returns the earth radius in meters: `6378137`.
 TODO: implement the following functions
 
 ```js
-
-// @type {[topLeft: Location, bottomRight: Location]} BoundingBox
 
 // ------------------------------ bounding box ------------------------------
 
