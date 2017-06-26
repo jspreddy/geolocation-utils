@@ -120,6 +120,12 @@ Calculate the distance between two locations. Returns a distance in meters.
 
 Get the bounding box of a list with locations, optionally with an extra margin around it in meters. Returns a `BoundingBox` with topLeft and bottomRight location.
 
+### `insideBoundingBox(location: Location, boundingBox: BoundingBox): boolean`
+
+Test whether a location lies inside a given bounding box. 
+Returns `true` when the point is inside the bounding box or on the edge.
+The function is resilient against mixing up locations of the bounding boxes' `topLeft` and `bottomRight` location.
+
 ### `moveTo(center: Location, angleDistance: AngleDistance): Location`
 
 Move to a new location from a start location, angle (in degrees), and distance (in meters).
@@ -187,20 +193,11 @@ Returns the earth radius in meters: `6378137`.
 TODO: implement the following functions
 
 ```js
-
-// ------------------------------ bounding box ------------------------------
-
-function insideBoundingBox(location: Location, boundingBox: BoundingBox) : boolean
 function insidePolygon(location: Location, polygon: Location[]) : boolean
 function insideCircle(location: Location, center: Location, radiusInMeter: number) : boolean
 
-// ------------------------------ speed, cpa, ... ------------------------------
-
 // closet point of approach
 function cpa (track1: {location: Location, speed: number}, track2: {location: Location, speed: number}) : {time: number, distance: number}
-
-
-// ------------------------------ geojson ------------------------------
 
 // utilities to convert locations to geojson?
 ```

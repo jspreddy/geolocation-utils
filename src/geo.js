@@ -389,46 +389,29 @@ export function distanceTo (center, point) {
 }
 
 /**
- * Calculate the average of two or multiple points
- * @param {{lon: number, lon: number}} points
- * @returns {{lon: number, lat: number}}
- */
-// TODO: refactor and unit test function average
-function average (points) {
-  const sum = {
-    lon: 0,
-    lat: 0
-  }
-
-  points.forEach(point => {
-    sum.lon += point.lon
-    sum.lat += point.lat
-  })
-
-  return {
-    lon: sum.lon / points.length,
-    lat: sum.lat / points.length
-  }
-}
-
-/**
- * Test whether a point lies inside a given bounding box.
- * @param {{lat: number, lon: number}} point
- * @param {[{lon: number, lat: number}, {lon: number, lat: number}]} boundingBox
+ * Test whether a location lies inside a given bounding box.
+ * @param {Location} location
+ * @param {BoundingBox} boundingBox
  *            A bounding box containing a top left and bottom right location.
  *            The order doesn't matter.
  * @return {boolean} Returns true when the point is inside the bounding box
  *                   or on the edge.
  */
-// TODO: change API to accept a BoundingBox structure, unit test the function
-function insideBoundingBox (point, boundingBox) {
-  const lonMin = Math.min(boundingBox[0].lon, boundingBox[1].lon)
-  const lonMax = Math.max(boundingBox[0].lon, boundingBox[1].lon)
-  const latMin = Math.min(boundingBox[0].lat, boundingBox[1].lat)
-  const latMax = Math.max(boundingBox[0].lat, boundingBox[1].lat)
+export function insideBoundingBox (location, boundingBox) {
+  const lat = getLatitude(location)
+  const lon = getLongitude(location)
 
-  return point.lon >= lonMin && point.lon <= lonMax &&
-      point.lat >= latMin && point.lat <= latMax
+  const topLeftLon = getLongitude(boundingBox.topLeft)
+  const topLeftLat = getLatitude(boundingBox.topLeft)
+  const bottomRightLon = getLongitude(boundingBox.bottomRight)
+  const bottomRightLat = getLatitude(boundingBox.bottomRight)
+  
+  const minLat = Math.min(topLeftLat, bottomRightLat)
+  const maxLat = Math.max(topLeftLat, bottomRightLat)
+  const minLon = Math.min(topLeftLon, bottomRightLon)
+  const maxLon = Math.max(topLeftLon, bottomRightLon)
+
+  return lon >= minLon && lon <= maxLon && lat >= minLat && lat <= maxLat
 }
 
 /**

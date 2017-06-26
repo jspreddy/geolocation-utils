@@ -8,6 +8,7 @@ import {
   knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
   angleAndDistanceTo, angleTo, distanceTo, moveTo,
   average, getBoundingBox,
+  insideBoundingBox,
   normalizeAngle, normalizeLatitude, normalizeLongitude, normalizeLocation
 } from '../src/geo'
 
@@ -346,6 +347,32 @@ test('getBoundingBox with margin', t => {
   const distance = distanceTo(boundingBox.topLeft, boundingBox.bottomRight)
   const digits = 0
   t.truthy(approxEqual(distance, Math.SQRT2 * 2 * margin, digits))
+})
+
+test('insideBoundingBox', t => {
+  const boundingBox = {
+    topLeft:     {lat: 20, lon: 0}, 
+    bottomRight: {lat: 0, lon: 10}
+  }
+
+  // inside 
+  t.is(insideBoundingBox({lat: 15, lon: 5}, boundingBox), true)
+
+  // on the edge
+  t.is(insideBoundingBox({lat: 20, lon: 5}, boundingBox), true)
+  t.is(insideBoundingBox({lat: 0, lon: 5}, boundingBox), true)
+  t.is(insideBoundingBox({lat: 15, lon: 0}, boundingBox), true)
+  t.is(insideBoundingBox({lat: 15, lon: 10}, boundingBox), true)
+
+  // outside
+  t.is(insideBoundingBox({lat: 21, lon: 5}, boundingBox), false)
+  t.is(insideBoundingBox({lat: -1, lon: 5}, boundingBox), false)
+  t.is(insideBoundingBox({lat: 15, lon: -1}, boundingBox), false)
+  t.is(insideBoundingBox({lat: 15, lon: 11}, boundingBox), false)
+
+  // wrong order of lat/lon
+  t.is(insideBoundingBox({lat: 15, lon: 11}, 
+      {topLeft: {lat: 0, lon: 0}, bottomRight: {lat: 20, lon: 10}}), false)
 })
 
 test ('normalizeAngle', t => {
