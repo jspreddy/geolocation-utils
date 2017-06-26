@@ -6,11 +6,14 @@ export const EARTH_RADIUS = 6378137  // Earth's radius in meters
 //
 
 /**
+ * Used data structures
+ * 
  * @type {{lat: number, lon: number}} LatLon
  * @type {{lat: number, lon: number}} LatLng
  * @type {{latitude: number, longitude: number}} LatitudeLongitude
  * @type {[number, number]} LonLatTuple
  * @type {LatLon | LatLng, LatitudeLongitude | LonLatTuple} Location
+ * @type {{[topLeft: Location, bottomRight: Location]}} BoundingBox
  * @type {{distance: number, angle: number}} AngleDistance
  */
 
@@ -536,12 +539,11 @@ export function average (locations) {
 /**
  * Get the bounding box of a list with locations
  * @param {Locations[]} locations
+ * @param {number} [margin]   Optional margin in meters. Zero by default.
  * @return {BoundingBox} Returns a bounding box described by it's top left 
  *                       and bottom right location
  */
-export function getBoundingBox (locations) {
-  // TODO:  extend getBoundingBox with support for margin in meters
-
+export function getBoundingBox (locations, margin = 0) {
   if (!Array.isArray(locations) || locations.length === 0) {
     return {
       topLeft: null, 
@@ -554,10 +556,21 @@ export function getBoundingBox (locations) {
   const topLeftLon = Math.min(...locations.map(getLongitude))
   const bottomRightLat = Math.min(...locations.map(getLatitude))
   const bottomRightLon = Math.max(...locations.map(getLongitude))
-  
-  return {
-    topLeft: createLocation(topLeftLat, topLeftLon, type),
-    bottomRight: createLocation(bottomRightLat, bottomRightLon, type)
+
+  const topLeft = createLocation(topLeftLat, topLeftLon, type)
+  const bottomRight = createLocation(bottomRightLat, bottomRightLon, type)
+
+  if (margin === null || margin === 0) {
+    // no margin
+    return { topLeft, bottomRight }
+  }
+  else {
+    // add a margin in meters
+    const distance = Math.SQRT2 * margin    
+    return { 
+      topLeft: moveTo(topLeft, {angle: 315, distance}), 
+      bottomRight: moveTo(bottomRight, {angle: 135, distance})
+    }
   }
 }
 

@@ -116,6 +116,16 @@ Calculate the angle and distance between two locations. Returns an object with a
 
 Move to a new location from a start location, angle (in degrees), and distance (in meters).
 
+## Calculations
+
+### `average(locations: Location[]): Location | null`
+
+Calculate the average of a list with locations. Returns `null` when the input is an empty Array or no Array. Returned Location format is the same as the format of the first entry of `locations`. The array can contain mixed content.
+
+### `getBoundingBox(locations: Location[], margin = 0): BoundingBox`
+
+Get the bounding box of a list with locations, optionally with an extra margin around it in meters. Returns a `BoundingBox` with topLeft and bottomRight location.
+
 ## Normalization
 
 ### `normalizeAngle(angle: number) : number`
@@ -135,12 +145,6 @@ Normalize a longitude into the range `(-180, 180]` (lower bound excluded, upper 
 Normalize the longitude and latitude of a location.
 Latitude will be in the range `[-90, 90]` (upper and lower bound included).
 Lontitude will be in the range (-180, 180] (lower bound excluded, upper bound included).
-
-## Stats
-
-### `average(locations: Location[]): Location | null`
-
-Calculate the average of a list with locations. Returns `null` when the input is an empty Array or no Array. Returned Location format is the same as the format of the first entry of `locations`. The array can contain mixed content.
 
 ## Unit conversions
 
@@ -193,9 +197,6 @@ TODO: implement the following functions
 function insideBoundingBox(location: Location, boundingBox: BoundingBox) : boolean
 function insidePolygon(location: Location, polygon: Location[]) : boolean
 function insideCircle(location: Location, center: Location, radiusInMeter: number) : boolean
-
-// calculate the smallest bounding box around a list with locations
-function getBoundingBox(locations: Location[], margin): BoundingBox
 
 // ------------------------------ speed, cpa, ... ------------------------------
 

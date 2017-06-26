@@ -302,9 +302,9 @@ test('average', t => {
   // mixed content
   t.deepEqual(average([{latitude: 30, longitude: 10}, {lat: 50, lon: 30}]), {latitude: 40, longitude: 20})
 
+  // invalid input
   t.deepEqual(average([]), null)
   t.deepEqual(average(), null)
-  
   t.throws(() => { average([{foo: 'bar'}]) }, /Unknown location format/)
 })
 
@@ -324,10 +324,28 @@ test('getBoundingBox', t => {
   t.deepEqual(getBoundingBox([{latitude: 30, longitude: 10}, {lat: 50, lon: 40}]), 
       {topLeft: {latitude: 50, longitude: 10}, bottomRight: {latitude: 30, longitude: 40}})
 
+  // invalid input
   t.deepEqual(getBoundingBox([]), {topLeft: null, bottomRight: null})
   t.deepEqual(getBoundingBox(), {topLeft: null, bottomRight: null})
-  
   t.throws(() => { getBoundingBox([{foo: 'bar'}]) }, /Unknown location format/)
+})
+
+test('getBoundingBox with margin', t => {
+  // without margin
+  t.deepEqual(getBoundingBox([{lat: 51, lon: 4}]), 
+      {topLeft: {lat: 51, lon: 4}, bottomRight: {lat: 51, lon: 4}})
+
+  // with margin
+  const margin = 10000 // meters
+  const boundingBox = getBoundingBox([{lat: 51, lon: 4}], margin)
+  t.truthy(approxDeepEqual(boundingBox.topLeft, {lat: 51.0898, lon: 3.857256})) 
+  t.truthy(approxDeepEqual(boundingBox.bottomRight, {lat: 50.910168, lon: 4.142743}))
+
+  // calcualate the distance between the corner points
+  // distance of the diagonal should be equal to sqrt((2*margin)^2 + (2*margin)^2)
+  const distance = distanceTo(boundingBox.topLeft, boundingBox.bottomRight)
+  const digits = 0
+  t.truthy(approxEqual(distance, Math.SQRT2 * 2 * margin, digits))
 })
 
 test ('normalizeAngle', t => {
@@ -381,9 +399,10 @@ test ('normalizeLocation', t => {
  * asserts when that's not the case
  * @param {number} value 
  * @param {number} expected 
+ * @param {number} [digits] number of digits
  */
-function approxEqual (value, expected) {
-  return round(value) === round(expected)
+function approxEqual (value, expected, digits) {
+  return round(value, digits) === round(expected, digits)
 }
 
 /**
@@ -404,8 +423,8 @@ function replacer (key, value) {
   return value
 }
 
-function round (value) {
-    return parseFloat(value.toFixed(DIGITS))
+function round (value, digits = DIGITS) {
+    return parseFloat(value.toFixed(digits))
 }
 
 const DIGITS = 4

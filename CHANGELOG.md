@@ -3,7 +3,7 @@
 
 # not yet released, version 0.4.0
 
-- Implemented `average`.
+- Implemented `getBoundingBox`, `average`.
 
 
 # 2017-05-30, version 0.3.0
