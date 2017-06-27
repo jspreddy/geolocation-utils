@@ -20,9 +20,9 @@ const geo = require('geolocation-utils')
 console.log(geo.toLatLon([4, 51])) 
 // { lat: 51, lon: 4 }
 
-const point1 = {lat: 51, lon: 4}
-const point2 = {lat: 51.001, lon: 4.001 }
-console.log(geo.angleAndDistanceTo(point1, point2)) 
+const location1 = {lat: 51, lon: 4}
+const location2 = {lat: 51.001, lon: 4.001 }
+console.log(geo.angleAndDistanceTo(location1, location2)) 
 // { 
 //   angle: 32.1...,      // degrees
 //   distance: 131.5...   // meter
@@ -41,7 +41,7 @@ Name | Structure | Description
 `LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
 `LonLatTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
 `Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
-`BoundingBox` | `{[topLeft: Location, bottomRight: Location]}` | top left and bottom right points describing a bounding box
+`BoundingBox` | `{[topLeft: Location, bottomRight: Location]}` | top left and bottom right locations describing a bounding box
 `AngleDistance` | `{angle: number, distance: number}` | object containing a property `angle` in degrees, and `distance` in meters
 
 ## Conversions
@@ -123,8 +123,13 @@ Get the bounding box of a list with locations, optionally with an extra margin a
 ### `insideBoundingBox(location: Location, boundingBox: BoundingBox): boolean`
 
 Test whether a location lies inside a given bounding box. 
-Returns `true` when the point is inside the bounding box or on the edge.
+Returns `true` when the location is inside the bounding box or on the edge.
 The function is resilient against mixing up locations of the bounding boxes' `topLeft` and `bottomRight` location.
+
+### `insideCircle(location: Location, center: Location, radius: number) : boolean`
+
+Test whether a location lies inside a circle defined by a center location and a radius in meters. 
+Returns `true` when the location is inside the circle or on the edge.
 
 ### `moveTo(center: Location, angleDistance: AngleDistance): Location`
 
@@ -194,7 +199,6 @@ TODO: implement the following functions
 
 ```js
 function insidePolygon(location: Location, polygon: Location[]) : boolean
-function insideCircle(location: Location, center: Location, radiusInMeter: number) : boolean
 
 // closet point of approach
 function cpa (track1: {location: Location, speed: number}, track2: {location: Location, speed: number}) : {time: number, distance: number}

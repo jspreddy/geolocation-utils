@@ -355,8 +355,7 @@ export function angleAndDistanceTo (from, to) {
   const dlon = degToRad(toLon - fromLon)
 
   const a = Math.sin(dlat/2) * Math.sin(dlat/2) +
-      Math.cos(lat1) * Math.cos(lat2) *
-      Math.sin(dlon/2) * Math.sin(dlon/2)
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlon/2) * Math.sin(dlon/2)
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
   const distance = EARTH_RADIUS * c
 
@@ -371,21 +370,21 @@ export function angleAndDistanceTo (from, to) {
 /**
  * Calculate the angle from one location to another location
  * @param {Location} center 
- * @param {Location} point 
+ * @param {Location} location 
  * @return {number} Returns an angle in degrees
  */
-export function angleTo (center, point) {
-  return angleAndDistanceTo(center, point).angle
+export function angleTo (center, location) {
+  return angleAndDistanceTo(center, location).angle
 }
 
 /**
  * Calculate the distance between two locations
  * @param {Location} center 
- * @param {Location} point 
+ * @param {Location} location 
  * @return {number} Returns the distance in meters
  */
-export function distanceTo (center, point) {
-  return angleAndDistanceTo(center, point).distance
+export function distanceTo (center, location) {
+  return angleAndDistanceTo(center, location).distance
 }
 
 /**
@@ -394,7 +393,7 @@ export function distanceTo (center, point) {
  * @param {BoundingBox} boundingBox
  *            A bounding box containing a top left and bottom right location.
  *            The order doesn't matter.
- * @return {boolean} Returns true when the point is inside the bounding box
+ * @return {boolean} Returns true when the location is inside the bounding box
  *                   or on the edge.
  */
 export function insideBoundingBox (location, boundingBox) {
@@ -412,6 +411,18 @@ export function insideBoundingBox (location, boundingBox) {
   const maxLon = Math.max(topLeftLon, bottomRightLon)
 
   return lon >= minLon && lon <= maxLon && lat >= minLat && lat <= maxLat
+}
+
+/**
+ * Test whether a location lies inside a circle with certain radius
+ * @param {Location} location 
+ * @param {Location} center 
+ * @param {number} radius    A radius in meters
+ * @return {boolean} Returns true when the location lies inside or 
+ *                   on the edge of the circle
+ */
+export function insideCircle (location, center, radius) {
+  return distanceTo(center, location) <= radius
 }
 
 /**

@@ -8,7 +8,7 @@ import {
   knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
   angleAndDistanceTo, angleTo, distanceTo, moveTo,
   average, getBoundingBox,
-  insideBoundingBox,
+  insideBoundingBox, insideCircle,
   normalizeAngle, normalizeLatitude, normalizeLongitude, normalizeLocation
 } from '../src/geo'
 
@@ -373,6 +373,23 @@ test('insideBoundingBox', t => {
   // wrong order of lat/lon
   t.is(insideBoundingBox({lat: 15, lon: 11}, 
       {topLeft: {lat: 0, lon: 0}, bottomRight: {lat: 20, lon: 10}}), false)
+})
+
+test('insideCircle', t => {
+  const center = {lat: 51, lon: 4}
+  const radius = 10000 // meters
+
+  // inside 
+  t.is(insideCircle({lat: 51.003, lon: 4.005}, center, radius), true) // 500 m, 45 degrees
+  t.is(insideCircle({lat: 51.03, lon: 4.05}, center, radius), true) // 5000 m, 45 degrees
+  t.is(insideCircle({lat: 50.991, lon: 4}, center, radius), true) // 1000 m, 180 degrees
+
+  // outside
+  t.is(insideCircle({lat: 51.0636, lon: 4.101}, center, radius), false) // 10000 m, 45 degrees
+  t.is(insideCircle({lat: 51.3, lon: 4.5}, center, radius), false) // 50000 m, 45 degrees
+
+  // negative radius
+  t.is(insideCircle({lat: 51, lon: 4}, center, -1000), false)
 })
 
 test ('normalizeAngle', t => {

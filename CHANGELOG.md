@@ -3,7 +3,7 @@
 
 # not yet released, version 0.4.0
 
-- Implemented `getBoundingBox`, `insideBoundingBox`, `average`.
+- Implemented `getBoundingBox`, `insideBoundingBox`, `insideCircle`, `average`.
 
 
 # 2017-05-30, version 0.3.0
