@@ -2,7 +2,13 @@
 
 A utility library for calculations with geolocations.
 
-`geolocation-utils` supports various location formats (like `[lon, lat]` and `{lat, lng}`). The library uses plain objects and arrays only. This makes it easy to interact with other libraries, REST API's, and to serialize/deserialize data for local storage.
+Features:
+- Convert between locations formats (like `[lon, lat]` and `{lat, lng}`)
+- Calculate distance and heading between locations, move a distance to a new location
+- Calculate bounding box around a list with locations
+- Calculate whether a location lies inside a circle, bounding box, or polygon
+- Calculate the closest point of approach (CPA)
+- Uses plain objects, so it plays nice with other libraries, REST API's, and is easy to serialize.
 
 # Install
 
@@ -12,21 +18,44 @@ npm install geolocation-utils
 
 # Usage
 
-Node.js:
-
 ```js
-const geo = require('geolocation-utils')
+import * as geo from 'geolocation-utils'
 
+// convert various location formats
 console.log(geo.toLatLon([4, 51])) 
 // { lat: 51, lon: 4 }
 
+// calculate the distance between locations, move to a new location
 const location1 = {lat: 51, lon: 4}
 const location2 = {lat: 51.001, lon: 4.001 }
 console.log(geo.headingDistanceTo(location1, location2)) 
 // { 
 //   heading: 32.1...,    // degrees
-//   distance: 131.5...   // meter
+//   distance: 131.5...   // meters
 // }
+console.log(geo.moveTo(location1, {heading: 32.1, distance: 131.5}))
+// {
+//   lat: 51.001...,
+//   lon: 4.001...,
+// } 
+
+// check whether a location is inside a circle, bounding box, or polygon
+const polygon = [
+  [4.03146, 51.9644],
+  [4.03151, 51.9643],
+  [4.03048, 51.9627],
+  [4.04550, 51.9600],
+  [4.05279, 51.9605],
+  [4.05215, 51.9619],
+  [4.04528, 51.9614],
+  [4.03146, 51.9644]
+]
+console.log(geo.insidePolygon([4.03324, 51.9632], polygon)) // true
+
+// and much more: 
+// - calculate bounding boxes around a list of locations,
+// - calculate the closest point of approach of two moving objects, 
+// - etc...
 ```
 
 
@@ -34,17 +63,17 @@ console.log(geo.headingDistanceTo(location1, location2))
 
 ## Data structures
 
-Name | Structure | Description
----- | ------- | ----
-`LatLon` | `{lat: number, lon: number}` | lat/lon object
-`LatLng` | `{lat: number, lng: number}` | lat/lng object
-`LatitudeLongitude` | `{latitude: number, longitude: number}` | latitude/longitude object
-`LonLatTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
-`Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
-`BoundingBox` | `{[topLeft: Location, bottomRight: Location]}` | top left and bottom right locations describing a bounding box
-`HeadingDistance` | `{heading: number, distance: number}` | object containing a property `heading` in degrees, and `distance` in meters
-`LocationHeadingSpeed` | `{location: Location, speed: number, heading: number}` | object containing a location, a `heading` in degrees, and a `speed` in meters per second
-`TimeDistance` | `{time: number, distance: number}` | object containing a `time` in seconds and a `distance` in meters
+Name                    | Structure                                                 | Description
+----------------------- | --------------------------------------------------------- | --------------------------------------
+`LatLon`                | `{lat: number, lon: number}`                              | lat/lon object
+`LatLng`                | `{lat: number, lng: number}`                              | lat/lng object
+`LatitudeLongitude`     | `{latitude: number, longitude: number}`                   | latitude/longitude object
+`LonLatTuple`           | `[longitude: number, latitude: number]`                   | array with two entries: lon, lat (MIND THE ORDER!)
+`Location`              | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
+`BoundingBox`           | `{[topLeft: Location, bottomRight: Location]}`            | top left and bottom right locations describing a bounding box
+`HeadingDistance`       | `{heading: number, distance: number}`                     | object containing a property `heading` in degrees, and `distance` in meters
+`LocationHeadingSpeed`  | `{location: Location, speed: number, heading: number}`    | object containing a location, a `heading` in degrees, and a `speed` in meters per second
+`TimeDistance`          | `{time: number, distance: number}`                        | object containing a `time` in seconds and a `distance` in meters
 
 ## Conversions
 
@@ -53,52 +82,108 @@ Name | Structure | Description
 Create a location object of a specific type. 
 Available types: `'LonLatTuple'`, `'LatLon'`, `'LatLng'`, `'LatitudeLongitude'`.
 
+```js
+createLocation(51, 4, 'LatLon') // {lat: 51, lon: 4}
+```
+
 ### `getLatitude(location: Location) : LatLng`
 
 Get the latitude of a location
+
+```js
+getLatitude({lat: 51, lon: 4}) // 51
+```
 
 ### `getLocationType(location: Location) : string`
 
 Get the type of a location object. Returns the type of the location object.
 Recognized types: `'LonLatTuple'`, `'LatLon'`, `'LatLng'`, `'LatitudeLongitude'`.
 
+```js
+getLocationType({lat: 51, lon: 4}) // 'LatLon'
+```
+
 ### `getLongitude(location: Location) : LatLng`
 
 Get the longitude of a location
+
+```js
+getLongitude({lat: 51, lon: 4}) // 4
+```
 
 ### `isLatLon(object: Location) : boolean`
 
 Test whether an `object` is an object containing numeric properties `lat` and `lon`.
 
+```js
+isLatLon({lat: 51, lon: 4})            // true
+isLatLon({latitude: 51, longitude: 4}) // false
+```
+
 ### `isLatLng(object: Location) : boolean`
 
 Test whether an `object` is an object containing numeric properties `lat` and `lng`.
+
+```js
+isLatLng({lat: 51, lng: 4})            // true
+isLatLng({latitude: 51, longitude: 4}) // false
+```
 
 ### `isLatitudeLongitude(object: Location) : boolean`
 
 Test whether an `object` is an object containing numeric properties `latitude` and `longitude`.
 
+```js
+isLatitudeLongitude({latitude: 51, longitude: 4}) // true
+isLatitudeLongitude({lat: 51, lon: 4})            // false
+```
+
 ### `isLonLatTuple(object: Location) : boolean`
 
 Test whether an `object` is an array containing two numbers (longitude and latitude).
+
+```js
+isLonLatTuple([4, 51])                      // true
+isLonLatTuple({latitude: 51, longitude: 4}) // false
+```
 
 ### `toLatLng(location: Location) : LatLng`
 
 Convert a location into an object with properties `lat` and `lng`.
 
+```js
+toLatLng([4, 51])                      // {lat: 51, lng: 4}
+toLatLng({latitude: 51, longitude: 4}) // {lat: 51, lng: 4}
+```
+
 ### `toLatLon(location: Location) : LatLon`
 
 Convert a location into an object with properties `lat` and `lon`.
 
+```js
+toLatLon([4, 51])                      // {lat: 51, lon: 4}
+toLatLon({latitude: 51, longitude: 4}) // {lat: 51, lon: 4}
+```
+
 ### `toLatitudeLongitude(location: Location) : LatitudeLongitude`
 
 Convert a location into an object with properties `latitude` and `longitude`
+
+```js
+toLatitudeLongitude([4, 51])           // {latitude: 51, longitude: 4}
+toLatitudeLongitude({lat: 51, lon: 4}) // {latitude: 51, longitude: 4}
+```
 
 ### `toLonLatTuple(location: Location) : LonLatTuple`
 
 Convert a location into a tuple `[longitude, latitude]`, as used in the geojson standard
 
 > Note that for example Leaflet uses a tuple `[latitude, longitude]` instead, be careful!
+
+```js
+toLonLatTuple({latitude: 51, longitude: 4})   // [4, 51]
+toLonLatTuple({lat: 51, lon: 4})              // [4, 51]
+```
 
 ## Calculations
 
