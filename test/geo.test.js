@@ -6,10 +6,10 @@ import {
   getLatitude, getLongitude,
   radToDeg, degToRad, 
   knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
-  angleAndDistanceTo, angleTo, distanceTo, moveTo,
+  headingDistanceTo, headingTo, distanceTo, moveTo,
   average, getBoundingBox,
   insideBoundingBox, insideCircle,
-  normalizeAngle, normalizeLatitude, normalizeLongitude, normalizeLocation
+  normalizeHeading, normalizeLatitude, normalizeLongitude, normalizeLocation
 } from '../src/geo'
 
 test ('isLatLon', t => {
@@ -215,44 +215,44 @@ test ('kmPerHourToKnots', t => {
   t.truthy(approxEqual(kmPerHourToKnots(-3.704), -2))
 })
 
-test('angleAndDistanceTo', t => {
-  t.truthy(approxDeepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.00089831528412,lon:0}),
-    {distance:99.99999999985421,angle:0}))
+test('headingDistanceTo', t => {
+  t.truthy(approxDeepEqual(headingDistanceTo({lat: 51, lon: 0}, {lat:51.00089831528412,lon:0}),
+    {distance:99.99999999985421,heading:0}))
 
-  t.truthy(approxDeepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.001796630568236,lon:0}),
-    {distance:199.99999999970845,angle:0}))
+  t.truthy(approxDeepEqual(headingDistanceTo({lat: 51, lon: 0}, {lat:51.001796630568236,lon:0}),
+    {distance:199.99999999970845,heading:0}))
 
-  t.truthy(approxDeepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat: 51.000635204829045,lon:0.0010093504645301253}),
-    {distance:99.99965773348121,angle:44.999411688665425}))
+  t.truthy(approxDeepEqual(headingDistanceTo({lat: 51, lon: 0}, {lat: 51.000635204829045,lon:0.0010093504645301253}),
+    {distance:99.99965773348121,heading:44.999411688665425}))
 
-  t.truthy(approxDeepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}),
-    {distance:99.99999999843808,angle:89.99944533657323}))
+  t.truthy(approxDeepEqual(headingDistanceTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}),
+    {distance:99.99999999843808,heading:89.99944533657323}))
 
-  t.truthy(approxDeepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:50.99910168471588,lon:0}),
-    {distance:99.99999999985421,angle:180}))
+  t.truthy(approxDeepEqual(headingDistanceTo({lat: 51, lon: 0}, {lat:50.99910168471588,lon:0}),
+    {distance:99.99999999985421,heading:180}))
 
-  t.truthy(approxDeepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51,lon:-0.001427437116126087}),
-    {distance:99.99999999843808,angle:-89.99944533657323})) // = 270 degrees
+  t.truthy(approxDeepEqual(headingDistanceTo({lat: 51, lon: 0}, {lat:51,lon:-0.001427437116126087}),
+    {distance:99.99999999843808,heading:-89.99944533657323})) // = 270 degrees
 })
 
-test('angleAndDistanceTo (different location formats)', t => {
-  t.truthy(approxDeepEqual(angleAndDistanceTo({lat: 51, lon: 0}, {lat:51.00089831528412,lon:0}),
-    {distance:99.99999999985421,angle:0}))
+test('headingDistanceTo (different location formats)', t => {
+  t.truthy(approxDeepEqual(headingDistanceTo({lat: 51, lon: 0}, {lat:51.00089831528412,lon:0}),
+    {distance:99.99999999985421,heading:0}))
 
-  t.truthy(approxDeepEqual(angleAndDistanceTo({lat: 51, lng: 0}, {lat:51.00089831528412,lng:0}),
-    {distance:99.99999999985421,angle:0}))
+  t.truthy(approxDeepEqual(headingDistanceTo({lat: 51, lng: 0}, {lat:51.00089831528412,lng:0}),
+    {distance:99.99999999985421,heading:0}))
 
-  t.truthy(approxDeepEqual(angleAndDistanceTo({latitude: 51, longitude: 0}, {latitude:51.00089831528412,longitude:0}),
-    {distance:99.99999999985421,angle:0}))
+  t.truthy(approxDeepEqual(headingDistanceTo({latitude: 51, longitude: 0}, {latitude:51.00089831528412,longitude:0}),
+    {distance:99.99999999985421,heading:0}))
 
-  t.truthy(approxDeepEqual(angleAndDistanceTo([0, 51], [0, 51.00089831528412]),
-    {distance:99.99999999985421,angle:0}))
+  t.truthy(approxDeepEqual(headingDistanceTo([0, 51], [0, 51.00089831528412]),
+    {distance:99.99999999985421,heading:0}))
 
-  t.throws(() => { angleAndDistanceTo({foo: 'bar'}) }, /Unknown location format/)
+  t.throws(() => { headingDistanceTo({foo: 'bar'}) }, /Unknown location format/)
 })
 
-test('angleTo', t => {
-  t.truthy(approxDeepEqual(angleTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}), 89.99944533657323))
+test('headingTo', t => {
+  t.truthy(approxDeepEqual(headingTo({lat: 51, lon: 0}, {lat:51,lon:0.001427437116126087}), 89.99944533657323))
 })
 
 test('distanceTo', t => {
@@ -260,38 +260,38 @@ test('distanceTo', t => {
 })
 
 test('moveTo', t => {
-  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 0}),
+  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, heading: 0}),
     {lat:51.00089831528412,lon:0}))
 
-  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 200, angle: 0}),
+  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 200, heading: 0}),
     {lat:51.001796630568236,lon:0}))
 
-  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 45}),
+  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, heading: 45}),
     {lat: 51.000635204829045,lon:0.0010093504645301253}))
 
-  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 90}),
+  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, heading: 90}),
     {lat:51,lon:0.001427437116126087}))
 
-  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 180}),
+  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, heading: 180}),
     {lat:50.99910168471588,lon:1.7481062952479413e-19}))
 
-  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, angle: 270}),
+  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, {distance: 100, heading: 270}),
     {lat:51,lon:-0.001427437116126087}))
 })
 
 test('moveTo (different location formats)', t => {
-  const angleDistance = {distance: 100, angle: 45}
+  const headingDistance = {distance: 100, heading: 45}
 
-  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, angleDistance),
+  t.truthy(approxDeepEqual(moveTo({lat: 51, lon: 0}, headingDistance),
     {lat: 51.000635204829045,lon:0.0010093504645301253}))
-  t.truthy(approxDeepEqual(moveTo({lat: 51, lng: 0}, angleDistance),
+  t.truthy(approxDeepEqual(moveTo({lat: 51, lng: 0}, headingDistance),
     {lat: 51.000635204829045,lng:0.0010093504645301253}))
-  t.truthy(approxDeepEqual(moveTo({latitude: 51, longitude: 0}, angleDistance),
+  t.truthy(approxDeepEqual(moveTo({latitude: 51, longitude: 0}, headingDistance),
     {latitude: 51.000635204829045,longitude:0.0010093504645301253}))
-  t.truthy(approxDeepEqual(moveTo([0, 51], angleDistance), 
+  t.truthy(approxDeepEqual(moveTo([0, 51], headingDistance), 
     [0.0010093504645301253, 51.000635204829045]))
 
-  t.throws(() => { moveTo({foo: 'bar'}, {angle: 0, distance: 0}) }, /Unknown location format/)
+  t.throws(() => { moveTo({foo: 'bar'}, {heading: 0, distance: 0}) }, /Unknown location format/)
 })
 
 test('average', t => {
@@ -392,15 +392,15 @@ test('insideCircle', t => {
   t.is(insideCircle({lat: 51, lon: 4}, center, -1000), false)
 })
 
-test ('normalizeAngle', t => {
-  t.is(normalizeAngle(0), 0)
-  t.is(normalizeAngle(360), 0)
-  t.is(normalizeAngle(760), 40)
-  t.is(normalizeAngle(45), 45)
-  t.is(normalizeAngle(400), 40)
-  t.is(normalizeAngle(-40), 320)
-  t.is(normalizeAngle(-400), 320)
-  t.is(normalizeAngle(-760), 320)
+test ('normalizeHeading', t => {
+  t.is(normalizeHeading(0), 0)
+  t.is(normalizeHeading(360), 0)
+  t.is(normalizeHeading(760), 40)
+  t.is(normalizeHeading(45), 45)
+  t.is(normalizeHeading(400), 40)
+  t.is(normalizeHeading(-40), 320)
+  t.is(normalizeHeading(-400), 320)
+  t.is(normalizeHeading(-760), 320)
 })
 
 test ('normalizeLatitude', t => {

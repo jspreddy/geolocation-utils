@@ -14,7 +14,7 @@ export const EARTH_RADIUS = 6378137  // Earth's radius in meters
  * @type {[number, number]} LonLatTuple
  * @type {LatLon | LatLng, LatitudeLongitude | LonLatTuple} Location
  * @type {{[topLeft: Location, bottomRight: Location]}} BoundingBox
- * @type {{distance: number, angle: number}} AngleDistance
+ * @type {{heading: number, distance: number}} HeadingDistance
  */
 
 /**
@@ -307,7 +307,7 @@ export function getLatitude (location) {
 }
 
 /**
- * Move to a new location from a start location, angle, and distance
+ * Move to a new location from a start location, heading, and distance
  *
  * This is a rough estimation.
  *
@@ -316,23 +316,23 @@ export function getLatitude (location) {
  *   http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
  * 
  * @param {Location} location             Start location
- * @param {AngleDistance} angleDistance   An object with property `angle` in degrees and `distance` in meters
+ * @param {HeadingDistance} headingDistance   An object with property `heading` in degrees and `distance` in meters
  * @return {Location} Returns the moved location
  */
-export function moveTo (location, angleDistance) {
+export function moveTo (location, headingDistance) {
   // TODO: improve precision of this function moveTo
   const lat = getLatitude(location)
   const lon = getLongitude(location)
-  const { angle, distance } = angleDistance 
+  const { heading, distance } = headingDistance 
 
-  const dLat = distance * Math.cos(degToRad(angle)) / EARTH_RADIUS
-  const dLon = distance * Math.sin(degToRad(angle)) / (EARTH_RADIUS * Math.cos(degToRad(lat)))
+  const dLat = distance * Math.cos(degToRad(heading)) / EARTH_RADIUS
+  const dLon = distance * Math.sin(degToRad(heading)) / (EARTH_RADIUS * Math.cos(degToRad(lat)))
 
   return createLocation(lat + radToDeg(dLat), lon + radToDeg(dLon), getLocationType(location))
 }
 
 /**
- * Calculate the angle and distance between two locations
+ * Calculate the heading and distance between two locations
  *
  * Sources:
  * 
@@ -341,9 +341,9 @@ export function moveTo (location, angleDistance) {
  * 
  * @param {Location} from   Start location
  * @param {Location} to     End location
- * @return {{distance, angle}}  Returns an object with `distance` in meters and `angle` in degrees
+ * @return {HeadingDistance}  Returns an object with `heading` in degrees and `distance` in meters
  */
-export function angleAndDistanceTo (from, to) {
+export function headingDistanceTo (from, to) {
   const fromLat = getLatitude(from)
   const fromLon = getLongitude(from)
   const toLat = getLatitude(to)
@@ -362,19 +362,19 @@ export function angleAndDistanceTo (from, to) {
   const y = Math.sin(dlon) * Math.cos(lat2)
   const x = Math.cos(lat1) * Math.sin(lat2) -
       Math.sin(lat1) * Math.cos(lat2) * Math.cos(dlon)
-  const angle = radToDeg(Math.atan2(y, x))
+  const heading = radToDeg(Math.atan2(y, x))
 
-  return { distance, angle }
+  return { distance, heading }
 }
 
 /**
- * Calculate the angle from one location to another location
+ * Calculate the heading from one location to another location
  * @param {Location} center 
  * @param {Location} location 
- * @return {number} Returns an angle in degrees
+ * @return {number} Returns an heading in degrees
  */
-export function angleTo (center, location) {
-  return angleAndDistanceTo(center, location).angle
+export function headingTo (center, location) {
+  return headingDistanceTo(center, location).heading
 }
 
 /**
@@ -384,7 +384,7 @@ export function angleTo (center, location) {
  * @return {number} Returns the distance in meters
  */
 export function distanceTo (center, location) {
-  return angleAndDistanceTo(center, location).distance
+  return headingDistanceTo(center, location).distance
 }
 
 /**
@@ -426,12 +426,12 @@ export function insideCircle (location, center, radius) {
 }
 
 /**
- * Normalize an angle into the range [0, 360)
- * @param {number} angle   An angle in degrees
- * @return {number} Returns the normalized angle (degrees)
+ * Normalize an heading into the range [0, 360)
+ * @param {number} heading   An heading in degrees
+ * @return {number} Returns the normalized heading (degrees)
  */
-export function normalizeAngle(angle) {
-  let normalized = angle % 360
+export function normalizeHeading(heading) {
+  let normalized = heading % 360
 
   if (normalized < 0) {
     normalized += 360
@@ -562,8 +562,8 @@ export function getBoundingBox (locations, margin = 0) {
     // add a margin in meters
     const distance = Math.SQRT2 * margin    
     return { 
-      topLeft: moveTo(topLeft, {angle: 315, distance}), 
-      bottomRight: moveTo(bottomRight, {angle: 135, distance})
+      topLeft: moveTo(topLeft, {heading: 315, distance}), 
+      bottomRight: moveTo(bottomRight, {heading: 135, distance})
     }
   }
 }

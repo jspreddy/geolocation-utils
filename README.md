@@ -22,9 +22,9 @@ console.log(geo.toLatLon([4, 51]))
 
 const location1 = {lat: 51, lon: 4}
 const location2 = {lat: 51.001, lon: 4.001 }
-console.log(geo.angleAndDistanceTo(location1, location2)) 
+console.log(geo.headingDistanceTo(location1, location2)) 
 // { 
-//   angle: 32.1...,      // degrees
+//   heading: 32.1...,    // degrees
 //   distance: 131.5...   // meter
 // }
 ```
@@ -42,7 +42,7 @@ Name | Structure | Description
 `LonLatTuple` | `[longitude: number, latitude: number]` | array with two entries: lon, lat (MIND THE ORDER!)
 `Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
 `BoundingBox` | `{[topLeft: Location, bottomRight: Location]}` | top left and bottom right locations describing a bounding box
-`AngleDistance` | `{angle: number, distance: number}` | object containing a property `angle` in degrees, and `distance` in meters
+`HeadingDistance` | `{heading: number, distance: number}` | object containing a property `heading` in degrees, and `distance` in meters
 
 ## Conversions
 
@@ -104,13 +104,13 @@ Convert a location into a tuple `[longitude, latitude]`, as used in the geojson 
 
 Calculate the average of a list with locations. Returns `null` when the input is an empty Array or no Array. Returned Location format is the same as the format of the first entry of `locations`. The array can contain mixed content.
 
-### `angleAndDistanceTo (from: Location, to: Location) : AngleDistance`
+### `headingDistanceTo (from: Location, to: Location) : HeadingDistance`
 
-Calculate the angle and distance between two locations. Returns an object with a property `angle` in degrees, and a property `distance` in meters.
+Calculate the heading and distance between two locations. Returns an object with a property `heading` in degrees, and a property `distance` in meters.
 
-### `angleTo(from: Location, to: Location) : number`
+### `headingTo(from: Location, to: Location) : number`
 
-Calculate the angle from one location to another location. Returns an angle in degrees.
+Calculate the heading from one location to another location. Returns an heading in degrees.
 
 ### `distanceTo(from: Location, to: Location) : number`
 
@@ -131,15 +131,15 @@ The function is resilient against mixing up locations of the bounding boxes' `to
 Test whether a location lies inside a circle defined by a center location and a radius in meters. 
 Returns `true` when the location is inside the circle or on the edge.
 
-### `moveTo(center: Location, angleDistance: AngleDistance): Location`
+### `moveTo(center: Location, headingDistance: HeadingDistance): Location`
 
-Move to a new location from a start location, angle (in degrees), and distance (in meters).
+Move to a new location from a start location, heading (in degrees), and distance (in meters).
 
 ## Normalization
 
-### `normalizeAngle(angle: number) : number`
+### `normalizeHeading(heading: number) : number`
 
-Normalize an angle in degrees into the range `[0, 360)` (lower bound included, upper bound excluded).
+Normalize a heading in degrees into the range `[0, 360)` (lower bound included, upper bound excluded).
 
 ### `normalizeLatitude(latiude: number) : number`
 
