@@ -8,7 +8,7 @@ import {
   knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
   headingDistanceTo, headingTo, distanceTo, moveTo,
   average, getBoundingBox,
-  insideBoundingBox, insideCircle,
+  insideBoundingBox, insideCircle, insidePolygon,
   normalizeHeading, normalizeLatitude, normalizeLongitude, normalizeLocation
 } from '../src/geo'
 
@@ -390,6 +390,42 @@ test('insideCircle', t => {
 
   // negative radius
   t.is(insideCircle({lat: 51, lon: 4}, center, -1000), false)
+})
+
+test('insidePolygon', t => {
+  // europa haven rotterdam, L shaped area
+  const polygon = [
+    [4.031467437744141, 51.96441845630598],
+    [4.031510353088379, 51.96431268689964],
+    [4.03048038482666,  51.962779002459634],
+    [4.045500755310059, 51.96000237127137],
+    [4.052796363830566, 51.960557711268194],
+    [4.052152633666992, 51.96198569681285],
+    [4.045286178588867, 51.96140393041545],
+    [4.031467437744141, 51.96441845630598]
+  ]
+
+  // inside
+  t.is(insidePolygon([4.033248424530029, 51.963294643601216], polygon), true)
+  t.is(insidePolygon([4.043612480163573, 51.96090148972336], polygon), true)
+  t.is(insidePolygon([4.051637649536133, 51.96144359654604], polygon), true)
+  
+  // outside
+  t.is(insidePolygon([4.051766395568848, 51.96009492841525], polygon), false)
+  t.is(insidePolygon([4.04545783996582, 51.961668370622995], polygon), false)
+  t.is(insidePolygon([4.030179977416992, 51.96366484383961], polygon), false)
+
+  // on the edge
+  t.is(insidePolygon([4.03048038482666,  51.962779002459634], polygon), true)
+
+  // other types of location
+  t.is(insidePolygon({lon: 4.033248424530029, lat: 51.963294643601216}, polygon), true)
+
+  // invalid input
+  t.throws(() => {insidePolygon({foo: 2}, polygon)}, /Unknown location format/)
+  t.throws(() => {insidePolygon([4.033248424530029, 51.963294643601216], [])}, /Invalid polygon. Non-empty Array expected/)
+  t.throws(() => {insidePolygon([4.033248424530029, 51.963294643601216], {})}, /Invalid polygon. Array with locations expected/)
+  t.throws(() => {insidePolygon([4.033248424530029, 51.963294643601216], null)}, /Invalid polygon. Array with locations expected/)
 })
 
 test ('normalizeHeading', t => {

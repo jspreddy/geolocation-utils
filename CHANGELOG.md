@@ -3,7 +3,7 @@
 
 # not yet released, version 0.4.0
 
-- Implemented `getBoundingBox`, `insideBoundingBox`, `insideCircle`, `average`.
+- Implemented `getBoundingBox`, `insideBoundingBox`, `insideCircle`, `insidePolygon`, `average`.
 - Renamed `angle` to `heading` everywhere in the library (properties and functions). Breaking change.
 
 

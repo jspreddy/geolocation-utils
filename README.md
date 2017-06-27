@@ -131,6 +131,11 @@ The function is resilient against mixing up locations of the bounding boxes' `to
 Test whether a location lies inside a circle defined by a center location and a radius in meters. 
 Returns `true` when the location is inside the circle or on the edge.
 
+### `insidePolygon(location: Location, polygon: Location[]) : boolean`
+
+Test whether a location lies inside a given polygon
+Returns `true` when the location is inside the polygon or on the edge.
+
 ### `moveTo(center: Location, headingDistance: HeadingDistance): Location`
 
 Move to a new location from a start location, heading (in degrees), and distance (in meters).
@@ -198,8 +203,6 @@ Returns the earth radius in meters: `6378137`.
 TODO: implement the following functions
 
 ```js
-function insidePolygon(location: Location, polygon: Location[]) : boolean
-
 // closet point of approach
 function cpa (track1: {location: Location, speed: number}, track2: {location: Location, speed: number}) : {time: number, distance: number}
 

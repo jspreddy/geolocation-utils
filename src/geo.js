@@ -1,3 +1,5 @@
+import pointInPolygon from 'point-in-polygon'
+
 export const EARTH_RADIUS = 6378137  // Earth's radius in meters
 
 // Literature:
@@ -411,6 +413,24 @@ export function insideBoundingBox (location, boundingBox) {
   const maxLon = Math.max(topLeftLon, bottomRightLon)
 
   return lon >= minLon && lon <= maxLon && lat >= minLat && lat <= maxLat
+}
+
+/**
+ * Test whether a location lies inside a given polygon
+ * @param {Location} location 
+ * @param {Location[]} polygon  
+ * @return {boolean} Returns true when the location is inside the bounding box
+ *                   or on the edge.
+ */
+export function insidePolygon (location, polygon) {
+  if (!polygon || !Array.isArray(polygon)) {
+    throw new TypeError('Invalid polygon. Array with locations expected')
+  }
+  if (polygon.length === 0) {
+    throw new TypeError('Invalid polygon. Non-empty Array expected')
+  }
+
+  return pointInPolygon(toLonLatTuple(location), polygon.map(toLonLatTuple))
 }
 
 /**
