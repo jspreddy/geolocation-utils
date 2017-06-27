@@ -1,11 +1,10 @@
 import test from 'ava'
+import { approxEqual, approxDeepEqual } from './approx'
 import { 
   isLatLon, isLatLng, isLatitudeLongitude, isLonLatTuple,
   getLocationType, createLocation,
   toLatitudeLongitude, toLatLon, toLatLng, toLonLatTuple,
   getLatitude, getLongitude,
-  radToDeg, degToRad, 
-  knotsToMeterPerSecond, meterPerSecondToKnots, knotsToKmPerHour, kmPerHourToKnots,
   headingDistanceTo, headingTo, distanceTo, moveTo,
   average, getBoundingBox,
   insideBoundingBox, insideCircle, insidePolygon,
@@ -179,40 +178,6 @@ test ('getLongitude', t => {
   t.deepEqual(getLongitude({latitude: 51, longitude: 4}), 4)
 
   t.throws(() => { getLatitude({foo: 'bar'}) }, /Unknown location format/)
-})
-
-test ('degToRad', t => {
-  t.truthy(approxEqual(degToRad(45), Math.PI / 4))
-  t.truthy(approxEqual(degToRad(90), Math.PI / 2))
-  t.truthy(approxEqual(degToRad(0), 0))
-  t.truthy(approxEqual(degToRad(-90), -Math.PI / 2))
-})
-
-test ('radToDeg', t => {
-  t.truthy(approxEqual(radToDeg(Math.PI / 4), 45))
-  t.truthy(approxEqual(radToDeg(Math.PI / 2), 90))
-  t.truthy(approxEqual(radToDeg(0), 0))
-  t.truthy(approxEqual(radToDeg(-Math.PI / 2), -90))
-})
-
-test ('knotsToMeterPerSecond', t => {
-  t.truthy(approxEqual(knotsToMeterPerSecond(5), 2.57222))
-  t.truthy(approxEqual(knotsToMeterPerSecond(-10), -5.14444))
-})
-
-test ('meterPerSecondToKnots', t => {
-  t.truthy(approxEqual(meterPerSecondToKnots(5), 9.71922))
-  t.truthy(approxEqual(meterPerSecondToKnots(-10), -19.43846))
-})
-
-test ('knotsToKmPerHour', t => {
-  t.truthy(approxEqual(knotsToKmPerHour(1), 1.852))
-  t.truthy(approxEqual(knotsToKmPerHour(-2), -3.704))
-})
-
-test ('kmPerHourToKnots', t => {
-  t.truthy(approxEqual(kmPerHourToKnots(1.852), 1))
-  t.truthy(approxEqual(kmPerHourToKnots(-3.704), -2))
 })
 
 test('headingDistanceTo', t => {
@@ -473,38 +438,3 @@ test ('normalizeLocation', t => {
   t.truthy(approxDeepEqual(normalizeLocation({lat: 91, lng: 360}), {lat: 89, lng: 0}))
   t.truthy(approxDeepEqual(normalizeLocation({latitude: 91, longitude: 360}), {latitude: 89, longitude: 0}))
 })
-
-/**
- * Helper function to check whether two numbers are approximately equal
- * asserts when that's not the case
- * @param {number} value 
- * @param {number} expected 
- * @param {number} [digits] number of digits
- */
-function approxEqual (value, expected, digits) {
-  return round(value, digits) === round(expected, digits)
-}
-
-/**
- * Helper function to check whether two objects or arrays are approximately deep equal
- * asserts when that's not the case
- * @param {number} value 
- * @param {number} expected 
- */
-function approxDeepEqual (value, expected) {
-  return JSON.stringify(value, replacer) === JSON.stringify(expected, replacer)
-}
-
-function replacer (key, value) {
-  if (typeof value === 'number') {
-    return round(value)
-  }
-
-  return value
-}
-
-function round (value, digits = DIGITS) {
-    return parseFloat(value.toFixed(digits))
-}
-
-const DIGITS = 4
