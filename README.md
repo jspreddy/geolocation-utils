@@ -43,6 +43,8 @@ Name | Structure | Description
 `Location` | `LatLon`, `LatLng`, `LatitudeLongitude`, or `LonLatTuple` | any geolocation structure
 `BoundingBox` | `{[topLeft: Location, bottomRight: Location]}` | top left and bottom right locations describing a bounding box
 `HeadingDistance` | `{heading: number, distance: number}` | object containing a property `heading` in degrees, and `distance` in meters
+`LocationHeadingSpeed` | `{location: Location, speed: number, heading: number}` | object containing a location, a `heading` in degrees, and a `speed` in meters per second
+`TimeDistance` | `{time: number, distance: number}` | object containing a `time` in seconds and a `distance` in meters
 
 ## Conversions
 
@@ -140,6 +142,13 @@ Returns `true` when the location is inside the polygon or on the edge.
 
 Move to a new location from a start location, heading (in degrees), and distance (in meters).
 
+### `cpa(track1: LocationHeadingSpeed, track2: LocationHeadingSpeed) : TimeDistance`
+
+Calculate the closest point of approach (CPA) for two moving objects, for example two ships or cars.
+Both tracks contain a `location`, `speed` in meters per second, and `heading` in degrees. 
+The returned result contains the time and distance of the moment when the two moving objects are closest.
+The `time` in seconds and distance in `meters`.
+
 ## Normalization
 
 ### `normalizeHeading(heading: number) : number`
@@ -197,19 +206,6 @@ Convert a speed in kilometer per hour into a speed in knots.
 
 Returns the earth radius in meters: `6378137`.
 
-
-## Roadmap
-
-TODO: implement the following functions
-
-```js
-// closet point of approach
-function cpa (track1: {location: Location, speed: number}, track2: {location: Location, speed: number}) : {time: number, distance: number}
-
-// utilities to convert locations to geojson?
-```
-
-TODO: background information about lat/lon vs lon/lat
 
 # `[lat, lon]` or `[lon, lat]`?
 

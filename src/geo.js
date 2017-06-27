@@ -5,23 +5,6 @@ import {
 
 export const EARTH_RADIUS = 6378137  // Earth's radius in meters
 
-// Literature:
-//
-// http://www.movable-type.co.uk/scripts/latlong.html
-//
-
-/**
- * Used data structures
- * 
- * @type {{lat: number, lon: number}} LatLon
- * @type {{lat: number, lon: number}} LatLng
- * @type {{latitude: number, longitude: number}} LatitudeLongitude
- * @type {[number, number]} LonLatTuple
- * @type {LatLon | LatLng, LatitudeLongitude | LonLatTuple} Location
- * @type {{[topLeft: Location, bottomRight: Location]}} BoundingBox
- * @type {{heading: number, distance: number}} HeadingDistance
- */
-
 /**
  * Test whether an object is an object containing numeric properties `lat` and `lon`
  * @param {*} object Anything

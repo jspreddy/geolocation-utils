@@ -31,16 +31,15 @@ export function approxEqual (value, expected, digits) {
  * @param {number} value 
  * @param {number} expected 
  */
-export function approxDeepEqual (value, expected) {
-  return JSON.stringify(value, replacer) === JSON.stringify(expected, replacer)
-}
+export function approxDeepEqual (value, expected, digits) {
+  function replacer (key, value) {
+    if (typeof value === 'number') {
+      return round(value, digits)
+    }
 
-function replacer (key, value) {
-  if (typeof value === 'number') {
-    return round(value)
+    return value
   }
-
-  return value
+  return JSON.stringify(value, replacer) === JSON.stringify(expected, replacer)
 }
 
 function round (value, digits = DIGITS) {
