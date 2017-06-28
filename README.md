@@ -25,8 +25,10 @@ import {
 } from 'geolocation-utils'
 
 // convert various location formats
-console.log(toLatLon([4, 51]))                        // { lat: 51, lon: 4 }
-console.log(toLatitudeLongitude({ lat: 51, lng: 4 })) // { latitude: 51, longitude: 4 }
+console.log(toLatLon([4, 51]))                        
+// { lat: 51, lon: 4 }
+console.log(toLatitudeLongitude({ lat: 51, lng: 4 })) 
+// { latitude: 51, longitude: 4 }
 
 // calculate the distance between locations, move to a new location
 const location1 = {lat: 51, lon: 4}
@@ -220,7 +222,8 @@ headingDistanceTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001})
 Calculate the heading from one location to another location. Returns an heading in degrees.
 
 ```js
-headingTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001}) // 46.3657229580657 degrees
+headingTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001}) 
+// 46.3657229580657 degrees
 ```
 
 ### `distanceTo(from: Location, to: Location) : number`
@@ -228,7 +231,8 @@ headingTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001}) // 46.3657229580657 deg
 Calculate the distance between two locations. Returns a distance in meters.
 
 ```js
-distanceTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001}) // 96.7928594737802 meters
+distanceTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001}) 
+// 96.7928594737802 meters
 ```
 
 ### `getBoundingBox(locations: Location[], margin = 0): BoundingBox`
@@ -325,7 +329,7 @@ The returned result contains the time and distance of the moment when the two mo
 The `time` in seconds and distance in `meters`.
 
 ```js
-// the following two ships are near each other and their paths will cross 
+// the following two ships are near each other and closing in
 const ship1 = {
   location: {lon: 4.61039, lat: 51.70401},
   speed: 5,     // meters/second
@@ -338,7 +342,7 @@ const ship2 = {
   heading: 180   // degrees
 }
 
-// lets see how close these ships will get and at what time they are closest
+// lets see how close these ships will get and when they are closest
 const { time, distance } = cpa(ship1, ship2)
 // time     = 251.22255125913932 seconds
 // distance = 231.90976012822378 meters
@@ -455,19 +459,19 @@ EARTH_RADIUS  // 6378137 meters
 
 The location and orientation of ships and airplaines on the globe is typically expressed in terms of longitude, latitude, and heading.
 
-- **Latitude** (vertical axis) is 0 degrees at the equator, and varies from -90 degrees on the South pool to 90 degrees on the North pool.
 - **Longitude** (horizontal axis) is zero degrees at Greenwich, and varies from -180 degrees West to 180 degrees East.
+- **Latitude** (vertical axis) is 0 degrees at the equator, and varies from -90 degrees on the South pool to 90 degrees on the North pool.
 - **Heading** varies from 0 to 360 degrees. North is 0 degrees, East is 90 degrees, South is 180 degrees, and West is 270 degrees. 
 
-![coordinate system](https://upload.wikimedia.org/wikipedia/commons/b/bc/FedStats_Lat_long.png)
+![coordinate system](https://www.e-education.psu.edu/natureofgeoinfo/sites/www.e-education.psu.edu.natureofgeoinfo/files/image/long_lat.gif)
 
-Source: [https://en.wikipedia.org/wiki/Geographic_coordinate_system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
+Source: [https://www.e-education.psu.edu/natureofgeoinfo/c2_p11.html](https://www.e-education.psu.edu/natureofgeoinfo/c2_p11.html)
 
 ![heading](https://i.stack.imgur.com/0ywYOm.gif)
 
 Source: [https://aviation.stackexchange.com/a/1597](https://aviation.stackexchange.com/a/1597)
 
-## `[lat, lon]` or `[lon, lat]`?
+## [lat, lon] or [lon, lat]?
 
 Yeah, it has bitten you probably too. What is the correct order of a geolocation tuple? Is it `[lat, lon]` or `[lon, lat]`? Turns out... there is no right way. There is an ISO standard ([ISO 6709](https://www.wikiwand.com/en/ISO_6709)), but only half of the big geolocation software libraries adhere to this standard whilst others do the opposite. It's painful and embarrassing having to scratch your head over this out again and again. Like Shane puts it in [an answer on StackOverflow](http://stackoverflow.com/questions/7309121/preferred-order-of-writing-latitude-longitude-tuples/13579921#13579921):
 
