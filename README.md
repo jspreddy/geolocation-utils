@@ -19,21 +19,21 @@ npm install geolocation-utils
 # Usage
 
 ```js
-import * as geo from 'geolocation-utils'
+import { toLatLon, headingDistanceTo, moveTo, insidePolygon } from 'geolocation-utils'
 
 // convert various location formats
-console.log(geo.toLatLon([4, 51])) 
+console.log(toLatLon([4, 51])) 
 // { lat: 51, lon: 4 }
 
 // calculate the distance between locations, move to a new location
 const location1 = {lat: 51, lon: 4}
 const location2 = {lat: 51.001, lon: 4.001 }
-console.log(geo.headingDistanceTo(location1, location2)) 
+console.log(headingDistanceTo(location1, location2)) 
 // { 
 //   heading: 32.1...,    // degrees
 //   distance: 131.5...   // meters
 // }
-console.log(geo.moveTo(location1, {heading: 32.1, distance: 131.5}))
+console.log(moveTo(location1, {heading: 32.1, distance: 131.5}))
 // {
 //   lat: 51.001...,
 //   lon: 4.001...,
@@ -50,7 +50,7 @@ const polygon = [
   [4.04528, 51.9614],
   [4.03146, 51.9644]
 ]
-console.log(geo.insidePolygon([4.03324, 51.9632], polygon)) // true
+console.log(insidePolygon([4.03324, 51.9632], polygon)) // true
 
 // and much more: 
 // - calculate bounding boxes around a list of locations,
@@ -191,21 +191,66 @@ toLonLatTuple({lat: 51, lon: 4})              // [4, 51]
 
 Calculate the average of a list with locations. Returns `null` when the input is an empty Array or no Array. Returned Location format is the same as the format of the first entry of `locations`. The array can contain mixed content.
 
+```js
+const locations = [
+  {lat: 51.02, lon: 4.00},
+  {lat: 51.06, lon: 4.01},
+  {lat: 51.07, lon: 4.02}
+]
+average(locations)   // {lat: 51.06, lon: 4.01}
+```
+
 ### `headingDistanceTo (from: Location, to: Location) : HeadingDistance`
 
 Calculate the heading and distance between two locations. Returns an object with a property `heading` in degrees, and a property `distance` in meters.
+
+```js
+headingDistanceTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001})
+// { 
+//   distance: 96.7928594737802,  // meters
+//   heading:  46.3657229580657   // degrees
+// }
+```
 
 ### `headingTo(from: Location, to: Location) : number`
 
 Calculate the heading from one location to another location. Returns an heading in degrees.
 
+```js
+headingTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001}) // 46.3657229580657 degrees
+```
+
 ### `distanceTo(from: Location, to: Location) : number`
 
 Calculate the distance between two locations. Returns a distance in meters.
 
+```js
+distanceTo({lat: 51, lon: 4}, {lat: 51.0006, lon: 4.001}) // 96.7928594737802 meters
+```
+
 ### `getBoundingBox(locations: Location[], margin = 0): BoundingBox`
 
 Get the bounding box of a list with locations, optionally with an extra margin around it in meters. Returns a `BoundingBox` with topLeft and bottomRight location.
+
+```js
+const locations = [
+  {lat: 50, lon: 10}, 
+  {lat: 40, lon: 40},
+  {lat: 30, lon: 20}
+]
+getBoundingBox(locations) 
+// {
+//   topLeft:     {lat: 50, lon: 10}, 
+//   bottomRight: {lat: 30, lon: 40}
+// }
+
+const margin = 10000 // meters
+getBoundingBox(locations, margin)
+// { 
+//   topLeft:     { lat: 50.08983152841195, lon: 9.860246950846237 },
+//   bottomRight: { lat: 29.910168471588047, lon: 40.10372851422071 } 
+// }
+```
 
 ### `insideBoundingBox(location: Location, boundingBox: BoundingBox): boolean`
 
@@ -213,19 +258,61 @@ Test whether a location lies inside a given bounding box.
 Returns `true` when the location is inside the bounding box or on the edge.
 The function is resilient against mixing up locations of the bounding boxes' `topLeft` and `bottomRight` location.
 
+```js
+const boundingBox = {
+  topLeft:     {lat: 20, lon: 0}, 
+  bottomRight: {lat: 0, lon: 10}
+}
+
+insideBoundingBox({lat: 15, lon: 5}, boundingBox) // true 
+insideBoundingBox({lat: 20, lon: 5}, boundingBox) // true
+insideBoundingBox({lat: 21, lon: 5}, boundingBox) // false
+```
+
 ### `insideCircle(location: Location, center: Location, radius: number) : boolean`
 
 Test whether a location lies inside a circle defined by a center location and a radius in meters. 
 Returns `true` when the location is inside the circle or on the edge.
+
+```js
+const center = {lat: 51, lon: 4}
+const radius = 10000 // meters
+
+insideCircle({lat: 51.03, lon: 4.05}, center, radius) // true
+insideCircle({lat: 51.3, lon: 4.5}, center, radius)   // false
+```
 
 ### `insidePolygon(location: Location, polygon: Location[]) : boolean`
 
 Test whether a location lies inside a given polygon
 Returns `true` when the location is inside the polygon or on the edge.
 
+```js
+// an L shaped area in the port of rotterdam
+const polygon = [
+  [4.031467437744141, 51.96441845630598],
+  [4.031510353088379, 51.96431268689964],
+  [4.03048038482666,  51.962779002459634],
+  [4.045500755310059, 51.96000237127137],
+  [4.052796363830566, 51.960557711268194],
+  [4.052152633666992, 51.96198569681285],
+  [4.045286178588867, 51.96140393041545],
+  [4.031467437744141, 51.96441845630598]
+]
+
+insidePolygon([4.033248424530029, 51.963294643601216], polygon)           // true
+insidePolygon({lon: 4.033248424530029, lat: 51.963294643601216}, polygon) // true
+insidePolygon([4.04545783996582, 51.961668370622995], polygon)            // false
+```
+
 ### `moveTo(center: Location, headingDistance: HeadingDistance): Location`
 
 Move to a new location from a start location, heading (in degrees), and distance (in meters).
+
+```js
+moveTo({lat: 51, lon: 4}, {distance: 100 /*meter*/, heading: 45})
+// { lat: 51.000635204829045, lon: 4.00100935046453 }
+```
 
 ### `cpa(track1: LocationHeadingSpeed, track2: LocationHeadingSpeed) : TimeDistance`
 
@@ -234,19 +321,57 @@ Both tracks contain a `location`, `speed` in meters per second, and `heading` in
 The returned result contains the time and distance of the moment when the two moving objects are closest.
 The `time` in seconds and distance in `meters`.
 
+```js
+// the following two ships are near each other and their paths will cross 
+const ship1 = {
+  location: {lon: 4.61039, lat: 51.70401},
+  speed: 5,     // meters/second
+  heading: 200  // degrees
+}
+
+const ship2 = {
+  location: {lon: 4.60109, lat: 51.69613},
+  speed: 0.8334,  // meters/second
+  heading: 180   // degrees
+}
+
+// lets see how close these ships will get and at what time they are closest
+const { time, distance } = cpa(ship1, ship2)
+// time     = 251.22255125913932 seconds
+// distance = 231.90976012822378 meters
+```
+
 ## Normalization
 
 ### `normalizeHeading(heading: number) : number`
 
 Normalize a heading in degrees into the range `[0, 360)` (lower bound included, upper bound excluded).
 
+```js
+normalizeHeading(45)  // 45 degrees
+normalizeHeading(-40) // 320 degrees
+normalizeHeading(380) // 20 degrees
+```
+
 ### `normalizeLatitude(latiude: number) : number`
 
 Normalize a latitude into the range `[-90, 90]` (upper and lower bound included). For example a latitude of `91` is normalized into `89` (crossed the pool one degree).
 
+```js
+normalizeLatitude(45)   // 45 degrees
+normalizeLatitude(91)   // 89 degrees
+normalizeLatitude(-180) // 0 degrees
+```
+
 ### `normalizeLongitude(longitude: number) : number`
 
 Normalize a longitude into the range `(-180, 180]` (lower bound excluded, upper bound included).
+
+```js
+normalizeLongitude(120)  // 120 degrees
+normalizeLongitude(200)  // -160 degrees
+normalizeLongitude(-720) // 0 degrees
+```
 
 ### `normalizeLocation(location: Location): Location`
 
@@ -254,36 +379,62 @@ Normalize the longitude and latitude of a location.
 Latitude will be in the range `[-90, 90]` (upper and lower bound included).
 Lontitude will be in the range (-180, 180] (lower bound excluded, upper bound included).
 
+```js
+normalizeLocation([360, 95]) // [ 0, 85 ] degrees
+```
+
 ## Units
 
 ### `degToRad(angle: number) : number`
 
 Convert an angle in degrees into an angle in radians.
 
+```js
+degToRad(45) // 0.7853981633974483 radians
+```
+
 ### `radToDeg(angle: number) : number`
 
 Convert an angle in radians into an angle in degrees.
+
+```js
+radToDeg(Math.PI / 4) // 45 degrees 
+```
 
 ### `knotsToMeterPerSecond(knots: number) : number`
 
 Convert a speed in knots into a speed in meter per second.
 1 knot is 0.514444 m/s.
 
+```js
+knotsToMeterPerSecond(10) // 5.14444 m/s
+```
+
 ### `meterPerSecondToKnots(meterPerSecond: number) : number`
 
 Convert a speed in meter per second into a speed in knots.
 1 knot is 0.514444 m/s.
+
+```js
+meterPerSecondToKnots(10) // 19.438461717893492 knots
+```
 
 ### `knotsToKmPerHour(knots: number) : number`
 
 Convert a speed in knots into a speed in kilometer per hour.
 1 knot is 1.852 kilometer per hour.
 
+```js
+knotsToKmPerHour(10) // 18.52 km/h
+```
+
 ### `kmPerHourToKnots(kmPerHour: number) : number`
 
 Convert a speed in kilometer per hour into a speed in knots.
 1 knot is 1.852 kilometer per hour.
-
+```js
+knotsToKmPerHour(10) // 18.52 km/h
+```
 
 ## Constants
 
@@ -291,8 +442,13 @@ Convert a speed in kilometer per hour into a speed in knots.
 
 Returns the earth radius in meters: `6378137`.
 
+```js
+EARTH_RADIUS  // 6378137 meters
+```
 
-# `[lat, lon]` or `[lon, lat]`?
+# Background information
+
+## `[lat, lon]` or `[lon, lat]`?
 
 Yeah, it has bitten you probably too. What is the correct order of a geolocation tuple? Is it `[lat, lon]` or `[lon, lat]`? Turns out... there is no right way. There is an ISO standard ([ISO 6709](https://www.wikiwand.com/en/ISO_6709)), but only half of the big geolocation software libraries adhere to this standard whilst others do the opposite. It's painful and embarrassing having to scratch your head over this out again and again. Like Shane puts it in [an answer on StackOverflow](http://stackoverflow.com/questions/7309121/preferred-order-of-writing-latitude-longitude-tuples/13579921#13579921):
 
@@ -365,6 +521,7 @@ npm test -- --watch
   ```
   npm publish
   ```
+  Before publishing, the library will be built and the unit tests will run.
 
 
 # License
