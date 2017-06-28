@@ -1,11 +1,12 @@
 # geolocation-utils changelog
 
 
-# not yet released, version 0.4.0
+# not yet released, version 1.0.0
 
 - Implemented `getBoundingBox`, `insideBoundingBox`, `insideCircle`, `insidePolygon`, `average`.
 - Implemented `cpa` (closest point of approach)
 - Renamed `angle` to `heading` everywhere in the library (properties and functions). Breaking change.
+- Worked out docs and examples.
 
 
 # 2017-05-30, version 0.3.0

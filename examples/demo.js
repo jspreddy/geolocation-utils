@@ -1,8 +1,8 @@
 const geo = require('..')
 
 // convert various location formats
-console.log(geo.toLatLon([4, 51])) 
-// { lat: 51, lon: 4 }
+console.log(geo.toLatLon([4, 51]))                        // { lat: 51, lon: 4 }
+console.log(geo.toLatitudeLongitude({ lat: 51, lng: 4 })) // { latitude: 51, longitude: 4 }
 
 // calculate the distance between locations, move to a new location
 const location1 = {lat: 51, lon: 4}

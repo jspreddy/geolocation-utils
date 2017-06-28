@@ -3,6 +3,7 @@
 A utility library for calculations with geolocations.
 
 Features:
+
 - Convert between locations formats (like `[lon, lat]` and `{lat, lng}`)
 - Calculate distance and heading between locations, move a distance to a new location
 - Calculate bounding box around a list with locations
@@ -19,25 +20,27 @@ npm install geolocation-utils
 # Usage
 
 ```js
-import { toLatLon, headingDistanceTo, moveTo, insidePolygon } from 'geolocation-utils'
+import { 
+  toLatLon, toLatitudeLongitude, headingDistanceTo, moveTo, insidePolygon 
+} from 'geolocation-utils'
 
 // convert various location formats
-console.log(toLatLon([4, 51])) 
-// { lat: 51, lon: 4 }
+console.log(toLatLon([4, 51]))                        // { lat: 51, lon: 4 }
+console.log(toLatitudeLongitude({ lat: 51, lng: 4 })) // { latitude: 51, longitude: 4 }
 
 // calculate the distance between locations, move to a new location
 const location1 = {lat: 51, lon: 4}
 const location2 = {lat: 51.001, lon: 4.001 }
 console.log(headingDistanceTo(location1, location2)) 
 // { 
-//   heading: 32.1...,    // degrees
-//   distance: 131.5...   // meters
+//   heading: 32.182377166258156,  // degrees
+//   distance: 131.52837683622332  // meters
 // }
 console.log(moveTo(location1, {heading: 32.1, distance: 131.5}))
 // {
-//   lat: 51.001...,
-//   lon: 4.001...,
-// } 
+//   lat: 51.00100069207888,
+//   lon: 4.000997477543457,
+// }
 
 // check whether a location is inside a circle, bounding box, or polygon
 const polygon = [
@@ -447,6 +450,22 @@ EARTH_RADIUS  // 6378137 meters
 ```
 
 # Background information
+
+## Geographical coordinate system
+
+The location and orientation of ships and airplaines on the globe is typically expressed in terms of longitude, latitude, and heading.
+
+- **Latitude** (vertical axis) is 0 degrees at the equator, and varies from -90 degrees on the South pool to 90 degrees on the North pool.
+- **Longitude** (horizontal axis) is zero degrees at Greenwich, and varies from -180 degrees West to 180 degrees East.
+- **Heading** varies from 0 to 360 degrees. North is 0 degrees, East is 90 degrees, South is 180 degrees, and West is 270 degrees. 
+
+![coordinate system](https://upload.wikimedia.org/wikipedia/commons/b/bc/FedStats_Lat_long.png)
+
+Source: [https://en.wikipedia.org/wiki/Geographic_coordinate_system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
+
+![heading](https://i.stack.imgur.com/0ywYOm.gif)
+
+Source: [https://aviation.stackexchange.com/a/1597](https://aviation.stackexchange.com/a/1597)
 
 ## `[lat, lon]` or `[lon, lat]`?
 
