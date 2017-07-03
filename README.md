@@ -312,7 +312,7 @@ insidePolygon({lon: 4.033248424530029, lat: 51.963294643601216}, polygon) // tru
 insidePolygon([4.04545783996582, 51.961668370622995], polygon)            // false
 ```
 
-### `moveTo(center: Location, headingDistance: HeadingDistance): Location`
+### `moveTo(from: Location, headingDistance: HeadingDistance): Location`
 
 Move to a new location from a start location, heading (in degrees), and distance (in meters).
 

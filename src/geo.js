@@ -303,20 +303,20 @@ export function getLatitude (location) {
  * 
  *   http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
  * 
- * @param {Location} location             Start location
+ * @param {Location} from             Start location
  * @param {HeadingDistance} headingDistance   An object with property `heading` in degrees and `distance` in meters
  * @return {Location} Returns the moved location
  */
-export function moveTo (location, headingDistance) {
+export function moveTo (from, headingDistance) {
   // TODO: improve precision of this function moveTo
-  const lat = getLatitude(location)
-  const lon = getLongitude(location)
+  const lat = getLatitude(from)
+  const lon = getLongitude(from)
   const { heading, distance } = headingDistance 
 
   const dLat = distance * Math.cos(degToRad(heading)) / EARTH_RADIUS
   const dLon = distance * Math.sin(degToRad(heading)) / (EARTH_RADIUS * Math.cos(degToRad(lat)))
 
-  return createLocation(lat + radToDeg(dLat), lon + radToDeg(dLon), getLocationType(location))
+  return createLocation(lat + radToDeg(dLat), lon + radToDeg(dLon), getLocationType(from))
 }
 
 /**
