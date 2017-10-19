@@ -527,26 +527,27 @@ npm test -- --watch
 
 # Publish 
 
-- Update version number in `package.json`
+-   Update version number in `package.json`
 
-- Describe version number, date, and changes in `CHANGELOG.md`
+-   Describe version number, date, and changes in `CHANGELOG.md`
 
-- Commit the changes, and create a tag with version number
+-   Commit the changes, and create a tag with version number
 
-  ```
-  git add ...
-  git commit -m "Released version 1.2.3"
-  git push origin master
-  git tag v1.2.3
-  git push --tags
-  ```
+    ```
+    git add ...
+    git commit -m "Released version 1.2.3"
+    git push origin master
+    git tag v1.2.3
+    git push --tags
+    ```
 
-- Publish the library
+-   Publish the library
 
-  ```
-  npm publish
-  ```
-  Before publishing, the library will be built and the unit tests will run.
+    ```
+    npm publish
+    ```
+
+    Before publishing, the library will be built and the unit tests will run.
 
 
 # License
