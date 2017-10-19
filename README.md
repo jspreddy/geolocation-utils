@@ -532,6 +532,7 @@ npm test -- --watch
 - Describe version number, date, and changes in `CHANGELOG.md`
 
 - Commit the changes, and create a tag with version number
+
   ```
   git add ...
   git commit -m "Released version 1.2.3"
@@ -541,6 +542,7 @@ npm test -- --watch
   ```
 
 - Publish the library
+
   ```
   npm publish
   ```
