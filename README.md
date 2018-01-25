@@ -198,9 +198,9 @@ Calculate the average of a list with locations. Returns `null` when the input is
 
 ```js
 const locations = [
-  {lat: 51.02, lon: 4.00},
-  {lat: 51.06, lon: 4.01},
-  {lat: 51.07, lon: 4.02}
+  {lat: 51.01, lon: 4.00},
+  {lat: 51.08, lon: 4.01},
+  {lat: 51.09, lon: 4.02}
 ]
 average(locations)   // {lat: 51.06, lon: 4.01}
 ```

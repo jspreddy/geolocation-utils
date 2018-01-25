@@ -1,6 +1,11 @@
 # geolocation-utils changelog
 
 
+# 2018-01-25, version 1.0.1
+
+- Fixed a typo in the example of function `average`.
+
+
 # 2017-06-28, version 1.0.0
 
 - Implemented `getBoundingBox`, `insideBoundingBox`, `insideCircle`, `insidePolygon`, `average`.
