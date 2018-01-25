@@ -533,19 +533,15 @@ npm test -- --watch
 
 -   Commit the changes, and create a tag with version number
 
-    ```
-    git add ...
-    git commit -m "Released version 1.2.3"
-    git push origin master
-    git tag v1.2.3
-    git push --tags
-    ```
-
+        git add ...
+        git commit -m "Released version 1.2.3"
+        git push origin master
+        git tag v1.2.3
+        git push --tags
+    
 -   Publish the library
 
-    ```
-    npm publish
-    ```
+        npm publish
 
     Before publishing, the library will be built and the unit tests will run.
 
