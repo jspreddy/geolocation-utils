@@ -116,6 +116,22 @@ Get the longitude of a location
 getLongitude({lat: 51, lon: 4}) // 4
 ```
 
+### `isEqual(location1: Location, location2: Location [, epsilon: number = 0]) : boolean`
+
+Test whether two locations are equal or approximately equal. The third argument `epsilon` is optional and is `0` by default (i.e. only locations that are strictly equal return true).
+
+```js
+// compare locations in different formats
+isEqual({longitude: 4, latitude: 51}, [4, 51])     // true
+isEqual({longitude: 4.1, latitude: 51.2}, [4, 51]) // false
+
+// A calculation like 0.1 + 0.2 introduces a round off error, which can be dealt
+// with by passing a value for epsilon specifying the maximum absolute difference.
+const epsilon = 1e-12   // max absolute difference
+isEqual({longitude: 0, latitude: 0.1 + 0.2}, {lon: 0, lat: 0.3})          // false
+isEqual({longitude: 0, latitude: 0.1 + 0.2}, {lon: 0, lat: 0.3}, epsilon) // true
+```
+
 ### `isLatLon(object: Location) : boolean`
 
 Test whether an `object` is an object containing numeric properties `lat` and `lon`.

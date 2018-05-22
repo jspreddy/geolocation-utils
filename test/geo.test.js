@@ -1,7 +1,7 @@
 import test from 'ava'
 import { approxEqual, approxDeepEqual } from './approx'
 import { 
-  isLatLon, isLatLng, isLatitudeLongitude, isLonLatTuple,
+  isLatLon, isLatLng, isLatitudeLongitude, isLonLatTuple, isEqual,
   getLocationType, createLocation,
   toLatitudeLongitude, toLatLon, toLatLng, toLonLatTuple,
   getLatitude, getLongitude,
@@ -10,6 +10,27 @@ import {
   insideBoundingBox, insideCircle, insidePolygon,
   normalizeHeading, normalizeLatitude, normalizeLongitude, normalizeLocation
 } from '../src/geo'
+
+test ('isEqual', t => {
+  t.is(isEqual([0, 0], [0, 0]), true)
+  t.is(isEqual({longitude: 4, latitude: 5}, [4, 5]), true)
+  t.is(isEqual({longitude: 4, latitude: 5}, [4, 5.1]), false)
+  t.is(isEqual({longitude: 4, latitude: 5}, [4.1, 5]), false)
+  t.is(isEqual({latitude: 0.3, longitude: 0},
+      {latitude: 0.30000000000000004, longitude: 0}), false)
+  t.is(isEqual({latitude: 0.3, longitude: 0},
+      {latitude: 0.30000000000000004, longitude: 0}, 0), false)
+  t.is(isEqual({latitude: 0.3, longitude: 0},
+      {latitude: 0.30000000000000004, longitude: 0}, 1e-12), true)
+  t.is(isEqual({lng: 2, lat: 4}, {lon: 2.01, lat: 4.01}), false)
+  t.is(isEqual({lng: 2, lat: 4}, {lon: 2.01, lat: 4.01}, 0.1), true)
+  t.is(isEqual({lng: 2, lat: 4}, {lon: 2.01, lat: 4.01}, 0.01), true)
+  t.is(isEqual({lng: 2, lat: 4}, {lon: 2, lat: 4.01}, 0.001), false)
+  t.is(isEqual({lng: 2, lat: 4}, {lon: 2.01, lat: 4}, 0.001), false)
+  t.is(isEqual({lng: 2, lat: 4}, null), false)
+  t.is(isEqual(null, null), false)
+  t.is(isEqual(null, {lng: 2, lat: 4}), false)
+})
 
 test ('isLatLon', t => {
   t.is(isLatLon({lat: 0, lon: 0}), true)

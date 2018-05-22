@@ -11,6 +11,7 @@ test ('index contains all functions of the library', t => {
     'kmPerHourToKnots',
 
     'EARTH_RADIUS',
+    'isEqual',
     'isLatLon',
     'isLatLng',
     'isLatitudeLongitude',

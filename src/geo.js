@@ -6,6 +6,23 @@ import {
 export const EARTH_RADIUS = 6378137  // Earth's radius in meters
 
 /**
+ * Test whether two locations are equal or approximately equal
+ * @param {Location} location1     A location in any of the supported location formats
+ * @param {Location} location2     A location in any of the supported location formats
+ * @param {number} [epsilon=0]     The maximum absolute difference between the
+ *                                 two latitudes and between the two longitudes.
+ *                                 Use for example 1e-12 to get rid of round-off errors.
+ *                                 The epsilon value itself is included.
+ *                                 Optional, default value is 0.
+ */
+export function isEqual (location1, location2, epsilon = 0) {
+  return (location1 && location2)
+      ? (Math.abs(getLatitude(location1) - getLatitude(location2)) <= epsilon) &&
+      (Math.abs(getLongitude(location1) - getLongitude(location2)) <= epsilon)
+      : false
+}
+
+/**
  * Test whether an object is an object containing numeric properties `lat` and `lon`
  * @param {*} object Anything
  * @param {boolean} Returns true when object is of type LatLon
