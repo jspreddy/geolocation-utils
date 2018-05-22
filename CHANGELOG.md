@@ -1,6 +1,11 @@
 # geolocation-utils changelog
 
 
+## 2018-05-22, version 1.1.1
+
+- Fixed broken deployment of v1.1.0.
+
+
 ## 2018-05-22, version 1.1.0
 
 - Implemented function `isEqual`.

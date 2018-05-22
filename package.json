@@ -1,6 +1,6 @@
 {
   "name": "geolocation-utils",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A utility library for calculations with geolocations",
   "main": "lib/index.js",
   "scripts": {
