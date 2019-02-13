@@ -1,10 +1,12 @@
 {
   "name": "geolocation-utils",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A utility library for calculations with geolocations",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
-    "build": "babel src -d lib",
+    "copy-d-ts": "copyup src/*.d.ts lib",
+    "build": "babel src -d lib && npm run copy-d-ts",
     "prepublishOnly": "npm run build && npm test",
     "test": "ava --verbose"
   },
@@ -31,9 +33,17 @@
     "ava": "0.19.1",
     "babel-cli": "6.24.1",
     "babel-core": "6.24.1",
-    "babel-preset-es2015": "6.24.1"
+    "babel-preset-es2015": "6.24.1",
+    "copyfiles": "2.1.0"
   },
   "dependencies": {
     "point-in-polygon": "1.0.1"
+  },
+  "resolve": {
+    "extensions": [
+      ".ts",
+      ".tsx",
+      ".js"
+    ]
   }
 }
