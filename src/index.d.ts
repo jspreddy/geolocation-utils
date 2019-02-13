@@ -1,13 +1,10 @@
 declare module 'geolocation-utils' {
-  type LonLat = [number, number]
-  type bounding = [number, number]
-
   interface LocationHeadingSpeed	{location: Location, speed: number, heading: number}
   interface LatLon	{lat: number, lon: number}
   interface LatLng	{lat: number, lng: number}
   interface LatitudeLongitude	{latitude: number, longitude: number}
-  interface LonLatTuple	{lonLat: LonLat}
-  interface BoundingBox	{bounding: bounding}
+  interface LonLatTuple	{lonLat: number[]}
+  interface BoundingBox	{bounding: number[]}
   interface HeadingDistance	{heading: number, distance: number}
   interface LocationHeadingSpeed	{location: Location, speed: number, heading: number}
   interface TimeDistance	{time: number, distance: number}
