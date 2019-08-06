@@ -14,7 +14,7 @@
  * 
  * @type {LatLon | LatLng, LatitudeLongitude | LonLatTuple} Location
  * 
- * @type {{[topLeft: Location, bottomRight: Location]}} BoundingBox
+ * @type {{topLeft: Location, bottomRight: Location}} BoundingBox
  * 
  * @type {{heading: number, distance: number}} HeadingDistance
  *     heading in degrees

@@ -4,7 +4,7 @@ declare module 'geolocation-utils' {
   interface LatLng	{lat: number, lng: number}
   interface LatitudeLongitude	{latitude: number, longitude: number}
   interface LonLatTuple	{lonLat: number[]}
-  interface BoundingBox	{bounding: number[]}
+  interface BoundingBox	{topLeft: Location, bottomRight: Location}
   interface HeadingDistance	{heading: number, distance: number}
   interface LocationHeadingSpeed	{location: Location, speed: number, heading: number}
   interface TimeDistance	{time: number, distance: number}
