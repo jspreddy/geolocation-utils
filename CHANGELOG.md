@@ -1,9 +1,15 @@
 # geolocation-utils changelog
 
 
-## 2019-08-06, version 1.1.2
+## 2019-08-06, version 1.2.2
 
 - Fix typescript definition of `BoundingBox`.
+
+
+## 2019-02-13, version 1.2.1
+
+
+## 2019-02-13, version 1.2.0
 
 
 ## 2018-05-22, version 1.1.1
